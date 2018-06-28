@@ -1,7 +1,7 @@
 # Racket Machine Learning - Core
 
 ![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)
-[![raco pkg install rml-core](https://img.shields.io/badge/raco_pkg_install-markdown-aa00ff.svg)](http://pkgs.racket-lang.org/#[rml-core])
+[![raco pkg install rml-core](https://img.shields.io/badge/raco_pkg_install-rml-core-aa00ff.svg)](http://pkgs.racket-lang.org/#[rml-core])
 [![Documentation](https://img.shields.io/badge/Docs-Documentation-blue.svg)](http://docs.racket-lang.org/rml-core/index.html)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rml-core.svg)](https://github.com/johnstonskj/rml-core/stargazers)
 ![MIT License](https://img.shields.io/badge/license-MIT-118811.svg)
