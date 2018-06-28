@@ -9,7 +9,7 @@
 @title[#:tag "ml" #:version "1.0"]{Racket Machine Learning --- Core}
 @author[(author+email "Simon Johnston" "johnstonskj@gmail.com")]
 
-@defmodule[rml/data  #:use-sources ("./rml/data.rkt")]
+@defmodule[rml/data  #:use-sources ("data.rkt")]
 
 This Package is part of an expected set of packages implementing machine learning capabilities
 for Racket. The core of this package is the management of `datasets', these data sets are assumed
@@ -21,7 +21,7 @@ This module deals with two opaque structure types, @racket[data-set] and @racket
 These are not available to clients directly although certain accessors are exported by this
 module. Conceptually a @racket[data-set] is a table of data, columns represent fields that are
 either @italic{features} that represent properties of an instance, and @italic{classifiers} or
-@italic{labels} that are used to train and match instances. 
+@italic{labels} that are used to train and match instances.
 
 You can view the source on @hyperlink[
   "https://github.com/johnstonskj/rml-core"
