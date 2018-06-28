@@ -21,11 +21,36 @@ and match instances.
 
 ## Modules
 
-* `data` - TBD
+* `data` - manage data sets, load from CSV and JSON files, save and load snapshots as well as
+manage partitions and statistics.
 
 ## Example
 
-TBD
+The following example loads a sample data set and displays some useful information before_script
+writing a snapshot to the current output port.
+
+```scheme
+(require rml/data.rkt)
+
+(define iris-data-set
+  (load-data-set "iris_training_data2.csv"
+                 'csv
+                 (list
+                   (make-feature "sepal-length" #:index 0)
+                   (make-feature "sepal-width" #:index 1)
+                   (make-feature "petal-length" #:index 2)
+                   (make-feature "petal-width" #:index 3)
+                   (make-classifier "classification" #:index 4))))
+
+(displayln (classifier-product dataset))
+(newline)
+
+(displayln (feature-statistics dataset "sepal-width"))
+(newline)
+
+(write-snapshot dataset (current-output-port))
+(newline)
+```
 
 ## Links
 
