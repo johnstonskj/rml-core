@@ -18,6 +18,9 @@
   [load-data-set
    (-> string? symbol? (listof data-set-field?) data-set?)]
 
+  [supported-formats
+   (-> (listof string?))]
+
   [data-set?
    (-> any/c boolean?)]
 
@@ -65,16 +68,14 @@
 
 ;; ---------- Requirements
 
-(require "notimplemented.rkt"
-         "dataset.rkt"
-         (prefix-in json: "json.rkt")
-         (prefix-in csv: "csv.rkt")
+(require "private/notimplemented.rkt"
+         "private/dataset.rkt"
+         (prefix-in json: "private/json.rkt")
+         (prefix-in csv: "private/csv.rkt")
          racket/future
          math/statistics)
 
 ;; ---------- Implementation
-
-(define all-formats (append json:supported-formats csv:supported-formats))
 
 (define (load-data-set name format fields)
   (let ([name-set (list->set (for/list ([f fields]) (data-set-field-name f)))])
@@ -82,11 +83,11 @@
       (raise-argument-error 'load-data-set "field names must be unique" 2 name format fields)))
   (let ([dataset
          (cond
-           [(member format json:supprted-formats)
+           [(member format json:supported-formats)
             (json:load-data-set name fields)]
-           [(member format csv:supprted-formats)
+           [(member format csv:supported-formats)
             (csv:load-data-set name fields)]
-           [else (raise-argument-error 'load-data-set (format "one of: ~s" (all-formats)) 1 name format fields)])])
+           [else (raise-argument-error 'load-data-set (format "one of: ~s" (supported-formats)) 1 name format fields)])])
     (data-set (make-hash
                (for/list ([i (range (length fields))])
                  (cons (data-set-field-name (list-ref fields i)) i)))
@@ -96,6 +97,9 @@
               (data-set-data-count dataset)
               (data-set-partition-count dataset)
               (data-set-partitions dataset))))
+
+(define supported-formats (append json:supported-formats csv:supported-formats))
+
 
 (define (features ds)
   (data-set-features ds))
