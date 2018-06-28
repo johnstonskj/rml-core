@@ -2,6 +2,7 @@
 
 [![GitHub release](https://img.shields.io/github/release/johnstonskj/rml-core.svg?style=flat-square)](https://github.com/johnstonskj/rml-core/releases)
 ![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)
+[![Coverage Status](https://coveralls.io/repos/github/johnstonskj/rml-core/badge.svg?branch=master)](https://coveralls.io/github/johnstonskj/rml-core?branch=master)
 [![raco pkg install rml-core](https://img.shields.io/badge/raco%20pkg%20install-rml--core-blue.svg)](http://pkgs.racket-lang.org/package/rml-core)
 [![Documentation](https://img.shields.io/badge/raco%20docs-rml--core-blue.svg)](http://docs.racket-lang.org/rml-core/index.html)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rml-core.svg)](https://github.com/johnstonskj/rml-core/stargazers)
@@ -18,6 +19,8 @@ available to clients directly although certain accessors are exported by this mo
 Conceptually a `data-set` is a table of data, columns represent fields that are either *features*
 that represent properties of an instance, and *classifiers* or *labels* that are used to train
 and match instances.
+
+See the `rml-knn` (not quite there yet) repository for an example capability built upon this package.
 
 ## Modules
 
@@ -51,7 +54,3 @@ writing a snapshot to the current output port.
 (write-snapshot dataset (current-output-port))
 (newline)
 ```
-
-## Links
-
-https://pkgd.racket-lang.org/pkgn/package/rml-core
