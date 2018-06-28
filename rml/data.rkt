@@ -18,11 +18,7 @@
   [load-data-set
    (-> string? symbol? (listof data-set-field?) data-set?)]
 
-  [supported-formats
-   (-> (listof string?))]
-
-  [data-set?
-   (-> any/c boolean?)]
+  [supported-formats (listof symbol?)]
 
   [features
    (-> data-set? (listof string?))]
@@ -64,7 +60,9 @@
    (-> data-set? output-port? void?)]
 
   [read-snapshot
-   (-> input-port? data-set?)]))
+   (-> input-port? data-set?)])
+
+  data-set?)
 
 ;; ---------- Requirements
 
@@ -135,7 +133,7 @@
   (let* ([names (classifiers ds)]
          [partition (data-set-partitions ds)])
     (classifier-product-strings
-     (map (lambda (name) (vector-ref partition (hash-ref (data-set-name-index ds) name))) names))))
+     (map (λ (name) (vector-ref partition (hash-ref (data-set-name-index ds) name))) names))))
 
 ;; ---------- Implementation (Partitioning)
 
@@ -180,7 +178,7 @@
     (vector-set!
      (data-set-statistics ds)
      (hash-ref (data-set-name-index ds) feature)
-     (future (lambda () (update-statistics* empty-statistics (feature-vector ds 'default feature))))))
+     (future (λ () (update-statistics* empty-statistics (feature-vector ds 'default feature))))))
   (data-set-statistics ds))
 
 (define (partition->index who ds partition)

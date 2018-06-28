@@ -8,8 +8,7 @@
 (provide
   (contract-out
 
-    [supported-formats
-     (-> (listof string?))]
+    [supported-formats (listof symbol?)]
 
     [load-data-set
      (-> string? (listof data-set-field?) data-set?)]))
@@ -21,7 +20,7 @@
 
 ;; ---------- Implementation
 
-(define supported-formats '('csv))
+(define supported-formats (list 'csv))
 
 (define default-csv-spec '((strip-leading-whitespace? . #t) (strip-trailing-whitespace? . #t)))
 
@@ -46,8 +45,8 @@
                                 (string->number (list-ref rowdata index))
                                 (list-ref rowdata index)))))))
        (data-set (make-hash (for/list ([i (length all-names)]) (cons (list-ref all-names i) i)))
-                 (map data-set-field-name (filter (lambda (f) (data-set-field-feature? f)) fields))
-                 (map data-set-field-name (filter (lambda (f) (data-set-field-classifier? f)) fields))
+                 (map data-set-field-name (filter (λ (f) (data-set-field-feature? f)) fields))
+                 (map data-set-field-name (filter (λ (f) (data-set-field-classifier? f)) fields))
                  (make-vector (length all-names))
                  rows
                  1

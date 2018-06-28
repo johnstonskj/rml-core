@@ -31,4 +31,4 @@ htmldocs: $(SCRBL)
 		$(SCRBL)
 
 viewdocs:
-  raco docs
+	raco docs

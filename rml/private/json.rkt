@@ -8,8 +8,7 @@
 (provide
   (contract-out
 
-    [supported-formats
-     (-> (listof string?))]
+    [supported-formats (listof symbol?)]
 
     [load-data-set
      (-> string? (listof data-set-field?) data-set?)]))
@@ -21,7 +20,7 @@
 
 ;; ---------- Implementation
 
-(define supported-formats '('json))
+(define supported-formats (list 'json))
 
 (define (load-data-set file-name fields)
   (let* ([file (open-input-file file-name)]
@@ -38,8 +37,8 @@
                 [column (vector-ref partition i)])
             (vector-set! column row (hash-ref rowdata (string->symbol feature)))))))
     (data-set (make-hash (for/list ([i (length all-names)]) (cons (list-ref all-names i) i)))
-              (map data-set-field-name (filter (lambda (f) (data-set-field-feature? f)) fields))
-              (map data-set-field-name (filter (lambda (f) (data-set-field-classifier? f)) fields))
+              (map data-set-field-name (filter (λ (f) (data-set-field-feature? f)) fields))
+              (map data-set-field-name (filter (λ (f) (data-set-field-classifier? f)) fields))
               (make-vector (length all-names))
               rows
               1
