@@ -7,4 +7,5 @@
 
 (define collection "rml")
 (define scribblings '(("scribblings/rml-core.scrbl" ())))
+(define test-include-paths '("test/main.rkt"))
 (define test-omit-paths '("scribblings"))

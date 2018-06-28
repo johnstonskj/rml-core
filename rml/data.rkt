@@ -45,7 +45,7 @@
    (-> data-set? (listof string?))]
 
   [partition-equally
-   (-> data-set? exact-positive-integer? (listof string?))]
+   (-> data-set? exact-positive-integer? (listof string?) data-set?)]
 
   [partition-for-test
    (-> data-set? (real-in 1.0 50.0) (listof string?) data-set?)]
@@ -63,8 +63,10 @@
    (-> input-port? data-set?)])
 
   data-set?
+  data-set-field?
 
-  data-set-field?)
+  make-feature
+  make-classifier)
 
 ;; ---------- Requirements
 
