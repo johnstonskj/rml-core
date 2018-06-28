@@ -2,4 +2,4 @@
 *.rkt#*
 .#*.rkt
 compiled/
-/htmldocs/
+/rml/doc/

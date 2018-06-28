@@ -2,14 +2,14 @@
 
 @(require racket/sandbox
           scribble/eval
-          (for-label "../data.rkt"
+          (for-label rml/data
                      racket/contract
                      math/statistics))
 
 @title[#:tag "ml" #:version "1.0"]{Racket Machine Learning --- Core}
 @author[(author+email "Simon Johnston" "johnstonskj@gmail.com")]
 
-@defmodule[rml/data  #:use-sources ("rml/data.rkt")]
+@defmodule[rml/data]
 
 This Package is part of an expected set of packages implementing machine learning capabilities
 for Racket. The core of this package is the management of `datasets', these data sets are assumed
