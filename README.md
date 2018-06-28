@@ -20,7 +20,7 @@ Conceptually a `data-set` is a table of data, columns represent fields that are 
 that represent properties of an instance, and *classifiers* or *labels* that are used to train
 and match instances.
 
-See the `rml-knn` (not quite there yet) repository for an example capability built upon this package.
+See the [rml-knn](https://github.com/johnstonskj/rml-knn) (not quite there yet) repository for an example capability built upon this package.
 
 ## Modules
 
