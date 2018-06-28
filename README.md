@@ -1,5 +1,6 @@
 # Racket Machine Learning - Core
 
+![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)
 ![MIT License](https://img.shields.io/badge/license-MIT-118811.svg)
 
 This package does not assume anything about the capabilities, and uses an
