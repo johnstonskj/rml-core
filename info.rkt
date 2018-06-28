@@ -11,5 +11,5 @@
 (define version "1.0")
 (define pkg-authors '(johnstonskj))
 
-(define deps '("base" "csv-reading"))
+(define deps '("base" "csv-reading" "mcfly")) ;; mcfly required by csv-reading
 (define build-deps '("scribble-lib" "racket-doc" "rackunit-lib"))
