@@ -1,7 +1,7 @@
 # Racket Machine Learning - Core
 
 ![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)
-(https://img.shields.io/github/stars/johnstonskj/rml-core.svg)](https://github.com/johnstonskj/rml-core/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rml-core.svg)](https://github.com/johnstonskj/rml-core/stargazers)
 ![MIT License](https://img.shields.io/badge/license-MIT-118811.svg)
 
 This package does not assume anything about the capabilities, and uses an
