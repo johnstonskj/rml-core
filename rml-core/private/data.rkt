@@ -61,36 +61,20 @@
    (-> data-set? output-port? void?)]
 
   [read-snapshot
-   (-> input-port? data-set?)]
-
-  [make-feature
-   (->* (string?) (#:index integer?) data-set-field?)]
-
-  [make-classifier
-   (->* (string?) (#:index integer?) data-set-field?)]))
+   (-> input-port? data-set?)]))
 
 ;; ---------- Requirements
 
 (require "notimplemented.rkt"
+         "dataset.rkt"
+         (prefix-in json: "json.rkt")
+         (prefix-in csv: "csv.rkt")
          racket/future
-         math/statistics
-         json
-         csv-reading)
+         math/statistics)
 
 ;; ---------- Implementation
 
-(struct data-set-field (
-                        name
-                        index
-                        feature?
-                        classifier?
-                        numeric?))
-
-(define (make-feature name #:index [index 0])
-  (data-set-field name index #t #f #t))
-
-(define (make-classifier name #:index [index 0])
-  (data-set-field name index #f #t #f))
+(define all-formats (append json:supported-formats csv:supported-formats))
 
 (define (load-data-set name format fields)
   (let ([name-set (list->set (for/list ([f fields]) (data-set-field-name f)))])
@@ -98,9 +82,11 @@
       (raise-argument-error 'load-data-set "field names must be unique" 2 name format fields)))
   (let ([dataset
          (cond
-           [(eq? format 'json) (load-json-data name fields)]
-           [(eq? format 'csv) (load-csv-data name fields)]
-           [else (raise-argument-error 'load-data-set "one of: 'json 'csv" 1 name format fields)])])
+           [(member format json:supprted-formats)
+            (json:load-data-set name fields)]
+           [(member format csv:supprted-formats)
+            (csv:load-data-set name fields)]
+           [else (raise-argument-error 'load-data-set (format "one of: ~s" (all-formats)) 1 name format fields)])])
     (data-set (make-hash
                (for/list ([i (range (length fields))])
                  (cons (data-set-field-name (list-ref fields i)) i)))
@@ -183,19 +169,6 @@
     ; TODO: check for version mismatch
     (apply data-set (rest values))))
 
-;; ---------- Internal types
-
-(struct data-set (
-                  name-index
-                  features
-                  classifiers
-                  statistics
-                  data-count
-                  partition-count
-                  partitions))
-
-(define empty-data-set (data-set (hash) '() '() #() 0 0 #()))
-
 ;; ---------- Internal procedures
 
 (define (compute-statistics ds)
@@ -225,57 +198,3 @@
 (define (classifier-product-strings lst)
   (map (lambda (l) (string-join l times))
        (apply cartesian-product (map list-unique-strings lst))))
-
-;; ---------- Internal procedures (data loading)
-
-(define (load-json-data file-name fields)
-  (let* ([file (open-input-file file-name)]
-         [data (read-json file)]
-         [rows (length data)]
-         [all-names (for/list ([f fields]) (data-set-field-name f))]
-         [partition (make-vector (length all-names))])
-    (for ([i (length all-names)])
-      (vector-set! partition i (make-vector rows)))
-    (for ([row rows])
-      (let ([rowdata (list-ref data row)])
-        (for ([i (length all-names)])
-          (let ([feature (list-ref all-names i)]
-                [column (vector-ref partition i)])
-            (vector-set! column row (hash-ref rowdata (string->symbol feature)))))))
-    (data-set (make-hash (for/list ([i (length all-names)]) (cons (list-ref all-names i) i)))
-              (map data-set-field-name (filter (lambda (f) (data-set-field-feature? f)) fields))
-              (map data-set-field-name (filter (lambda (f) (data-set-field-classifier? f)) fields))
-              (make-vector (length all-names))
-              rows
-              1
-              partition)))
-
-(define default-csv-spec '((strip-leading-whitespace? . #t) (strip-trailing-whitespace? . #t)))
-
-(define (load-csv-data file-name fields)
-  (let* ([file (open-input-file file-name)]
-         [reader (make-csv-reader file default-csv-spec)]
-         [data (csv->list reader)]
-         [rows (length data)]
-         [all-names (for/list ([f fields]) (data-set-field-name f))]
-         [partition (make-vector (length all-names))])
-       (for ([i (length all-names)])
-         (vector-set! partition i (make-vector rows)))
-       (for ([row rows])
-         (let ([rowdata (list-ref data row)])
-           (for ([i (length all-names)])
-             (let* ([feature (list-ref all-names i)]
-                    [field (findf (lambda (f) (eq? (data-set-field-name f) feature)) fields)]
-                    [index (data-set-field-index field)]
-                    [column (vector-ref partition i)])
-               (vector-set! column row
-                            (if (data-set-field-numeric? field)
-                                (string->number (list-ref rowdata index))
-                                (list-ref rowdata index)))))))
-       (data-set (make-hash (for/list ([i (length all-names)]) (cons (list-ref all-names i) i)))
-                 (map data-set-field-name (filter (lambda (f) (data-set-field-feature? f)) fields))
-                 (map data-set-field-name (filter (lambda (f) (data-set-field-classifier? f)) fields))
-                 (make-vector (length all-names))
-                 rows
-                 1
-                 partition)))

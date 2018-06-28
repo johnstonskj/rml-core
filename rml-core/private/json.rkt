@@ -7,14 +7,21 @@
 
 (provide
   (contract-out
+
+    [supported-formats
+     (-> (listof string?))]
+
     [load-data-set
      (-> string? (listof data-set-field?) data-set?)]))
 
 ;; ---------- Requirements
 
-(require json)
+(require "dataset.rkt"
+        json)
 
 ;; ---------- Implementation
+
+(define supported-formats '('json))
 
 (define (load-data-set file-name fields)
   (let* ([file (open-input-file file-name)]

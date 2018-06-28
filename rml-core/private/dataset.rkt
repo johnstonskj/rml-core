@@ -12,11 +12,14 @@
    (->* (string?) (#:index integer?) data-set-field?)]
 
   [make-classifier
-   (->* (string?) (#:index integer?) data-set-field?)])
-   
- data-set
- data-set-field
- empty-data-set)
+   (->* (string?) (#:index integer?) data-set-field?)]
+
+  [empty-data-set
+   (-> data-set?)])
+
+ (struct-out data-set)
+
+ (struct-out data-set-field))
 
 (struct data-set (
                   name-index

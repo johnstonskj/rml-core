@@ -7,14 +7,21 @@
 
 (provide
   (contract-out
+
+    [supported-formats
+     (-> (listof string?))]
+
     [load-data-set
      (-> string? (listof data-set-field?) data-set?)]))
 
 ;; ---------- Requirements
 
-(require csv-reading)
+(require "dataset.rkt"
+        csv-reading)
 
 ;; ---------- Implementation
+
+(define supported-formats '('csv))
 
 (define default-csv-spec '((strip-leading-whitespace? . #t) (strip-trailing-whitespace? . #t)))
 
