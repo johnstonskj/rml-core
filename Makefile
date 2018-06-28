@@ -23,7 +23,7 @@ test:
 htmldocs: $(SCRBL)
 	raco scribble \
 		--html \
-		--dest htmldocs \
+		--dest rml/doc \
 		--dest-name index \
 		++main-xref-in \
 		--redirect-main http://docs.racket-lang.org/ \
