@@ -62,7 +62,9 @@
   [read-snapshot
    (-> input-port? data-set?)])
 
-  data-set?)
+  data-set?
+
+  data-set-field?)
 
 ;; ---------- Requirements
 

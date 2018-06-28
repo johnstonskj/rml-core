@@ -2,3 +2,4 @@
 *.rkt#*
 .#*.rkt
 compiled/
+/htmldocs/
