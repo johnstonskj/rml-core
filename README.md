@@ -1,6 +1,5 @@
 # Racket Machine Learning - Core
 
-![raco pkg install markdown](https://img.shields.io/badge/raco_pkg_install-rml-core-aa00ff.svg)](https://pkgd.racket-lang.org/pkgn/package/rml-core)
 ![MIT License](https://img.shields.io/badge/license-MIT-118811.svg)
 
 This package does not assume anything about the capabilities, and uses an
