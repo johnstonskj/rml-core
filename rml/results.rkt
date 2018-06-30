@@ -34,7 +34,7 @@
 
 ;; ---------- Implementation
 
-(define (result-matrix a)
+(define (result-matrix? a)
   (confusion-matrix? a))
 
 (define (make-result-matrix data-set)
