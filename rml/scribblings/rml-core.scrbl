@@ -191,3 +191,44 @@ Read a @italic{snapshot} from the input port @racket[in] and returning a
 @racket[data-set] structure. Reading will cause an exception if the data set
 version number is incompatible.
 }
+
+@;{============================================================================}
+@;{============================================================================}
+@defmodule[rml/results]
+
+TBD
+
+@;{============================================================================}
+@section[#:tag "rml:res-types"]{Types and Predicates}
+
+@defproc[#:kind "predicate"
+         (result-matrix?
+           [a any/c])
+         boolean?]{
+TBD}
+
+@;{============================================================================}
+@section[#:tag "rml:res-matrix"]{Construction}
+
+@defproc[#:kind "constructor"
+         (make-result-matrix
+           [dataset data-set?])
+         record-matrix?]{
+TBD}
+
+@;{============================================================================}
+@section[#:tag "rml:res-record"]{Recording Results}
+
+@defproc[(record-result
+          [C record-matrix?]
+          [true-ω any/c]
+          [predicted-ω any/c])
+         record-matrix?]{
+TBD}
+
+@defproc[#:kind "accessor"
+         (result-matrix)
+         record-matrix?]{
+TBD}
+
+@;{============================================================================}

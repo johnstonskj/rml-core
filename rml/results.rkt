@@ -8,6 +8,9 @@
 (provide
  (contract-out
 
+  [result-matrix?
+   (-> any/c boolean?)]
+
   [make-result-matrix
    (-> data-set? confusion-matrix?)]
 
@@ -30,6 +33,9 @@
   results))
 
 ;; ---------- Implementation
+
+(define (result-matrix a)
+  (confusion-matrix? a))
 
 (define (make-result-matrix data-set)
   (let* ([values (classifier-product data-set)]
