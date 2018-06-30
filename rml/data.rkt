@@ -70,7 +70,7 @@
 
 ;; ---------- Requirements
 
-(require "private/notimplemented.rkt"
+(require "notimplemented.rkt"
          "private/dataset.rkt"
          (prefix-in json: "private/json.rkt")
          (prefix-in csv: "private/csv.rkt")
