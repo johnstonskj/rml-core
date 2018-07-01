@@ -26,6 +26,8 @@ See the [rml-knn](https://github.com/johnstonskj/rml-knn) (not quite there yet) 
 
 * `data` - manage data sets, load from CSV and JSON files, save and load snapshots as well as
 manage partitions and statistics.
+* `results` - provides a *confusion matrix* that records the results of classification
+as a mapping from true to predicted values.
 
 ## Example
 
