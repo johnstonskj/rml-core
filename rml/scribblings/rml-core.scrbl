@@ -6,10 +6,10 @@
                      racket/contract
                      math/statistics))
 
+@;{============================================================================}
+
 @title[#:tag "ml" #:version "1.0"]{Racket Machine Learning --- Core}
 @author[(author+email "Simon Johnston" "johnstonskj@gmail.com")]
-
-@defmodule[rml/data]
 
 This Package is part of an expected set of packages implementing machine learning capabilities
 for Racket. The core of this package is the management of `datasets', these data sets are assumed
@@ -17,18 +17,25 @@ to be for training and testing of machine learning capabilities. This package do
 anything about such capabilities, and uses an expansive notion of machine learning that should
 cover statistical inferencing, tree and decision matrix models, as well as deep leaning approaches.
 
+You can view the source on @hyperlink[
+  "https://github.com/johnstonskj/rml-core"
+  "GitHub"].
+
+@table-of-contents[]
+
+@;{============================================================================}
+@;{============================================================================}
+@section[]{Package rml/data}
+@defmodule[rml/data]
+
 This module deals with two opaque structure types, @racket[data-set] and @racket[data-set-field].
 These are not available to clients directly although certain accessors are exported by this
 module. Conceptually a @racket[data-set] is a table of data, columns represent fields that are
 either @italic{features} that represent properties of an instance, and @italic{classifiers} or
 @italic{labels} that are used to train and match instances.
 
-You can view the source on @hyperlink[
-  "https://github.com/johnstonskj/rml-core"
-  "GitHub"].
-
 @;{============================================================================}
-@section[#:tag "rml:types"]{Types and Predicates}
+@subsection[#:tag "rml:types"]{Types and Predicates}
 
 @defproc[#:kind "predicate"
          (data-set?
@@ -47,7 +54,7 @@ primarily used as a contract predicate.
 }
 
 @;{============================================================================}
-@section[#:tag "rml:construct"]{Construction}
+@subsection[#:tag "rml:construct"]{Construction}
 
 @defproc[#:kind "io"
          (load-data-set
@@ -64,7 +71,7 @@ Returns a list of file formats supported by the @racket[load-data-set] function.
 }
 
 @;{============================================================================}
-@section[#:tag "rml:access"]{Accessors}
+@subsection[#:tag "rml:access"]{Accessors}
 
 @defproc[#:kind "accessor"
          (classifiers?
@@ -127,7 +134,7 @@ The partition (vector of feature vectors) data itself.
 }
 
 @;{============================================================================}
-@section[#:tag "rml:transforms"]{Transformations}
+@subsection[#:tag "rml:transforms"]{Transformations}
 
 The following procedures perform transformations on one or more @racket[data-set]
 structures and return a new @racket[data-set]. These are typically concerned with
@@ -164,7 +171,7 @@ TBD
 }
 
 @;{============================================================================}
-@section[#:tag "rml:snapshots"]{Snapshots}
+@subsection[#:tag "rml:snapshots"]{Snapshots}
 
 Loading and manipulating data sets from source files may not always be efficient
 and so the parsed in-memory format can be saved and loaded externally. These
@@ -194,12 +201,14 @@ version number is incompatible.
 
 @;{============================================================================}
 @;{============================================================================}
+@section[]{Package rml/results}
+
 @defmodule[rml/results]
 
 TBD
 
 @;{============================================================================}
-@section[#:tag "rml:res-types"]{Types and Predicates}
+@subsection[#:tag "rml:res-types"]{Types and Predicates}
 
 @defproc[#:kind "predicate"
          (result-matrix?
@@ -208,7 +217,7 @@ TBD
 TBD}
 
 @;{============================================================================}
-@section[#:tag "rml:res-matrix"]{Construction}
+@subsection[#:tag "rml:res-matrix"]{Construction}
 
 @defproc[#:kind "constructor"
          (make-result-matrix
@@ -217,7 +226,7 @@ TBD}
 TBD}
 
 @;{============================================================================}
-@section[#:tag "rml:res-record"]{Recording Results}
+@subsection[#:tag "rml:res-record"]{Recording Results}
 
 @defproc[(record-result
           [C record-matrix?]
