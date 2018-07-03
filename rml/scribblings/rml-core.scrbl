@@ -352,6 +352,11 @@ uses all distinct classification values (ω) as both rows and columns and maps t
 predicted values to the labeled values incrementing the integer value at the intersection
 for each operation.
 
+@examples[ #:eval example-eval
+(define results (make-result-matrix dataset))
+(for ([row (result-matrix-formatted results)])
+  (displayln row))
+]
 
 @;{============================================================================}
 @subsection[#:tag "rml:res-types"]{Types and Predicates}
