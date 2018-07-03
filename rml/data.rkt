@@ -76,17 +76,17 @@
 
 ;; ---------- Implementation
 
-(define (load-data-set name format fields)
+(define (load-data-set name file-format fields)
   (let ([name-set (list->set (for/list ([f fields]) (data-set-field-name f)))])
     (when (not (eq? (length fields) (set-count name-set)))
       (raise-argument-error 'load-data-set "field names must be unique" 2 name format fields)))
   (let ([dataset
          (cond
-           [(member format json:supported-formats)
+           [(member file-format json:supported-formats)
             (json:load-data-set name fields)]
-           [(member format csv:supported-formats)
+           [(member file-format csv:supported-formats)
             (csv:load-data-set name fields)]
-           [else (raise-argument-error 'load-data-set (format "one of: ~s" (supported-formats)) 1 name format fields)])])
+           [else (raise-argument-error 'load-data-set (format "one of: ~s" supported-formats) 1 name file-format fields)])])
     (data-set (make-hash
                (for/list ([i (range (length fields))])
                  (cons (data-set-field-name (list-ref fields i)) i)))
