@@ -166,12 +166,13 @@
 ;; ---------- Internal procedures
 
 (define (compute-statistics ds)
-  (for/list ([feature (data-set-features ds)])
-    (vector-set!
-     (data-set-statistics ds)
-     (hash-ref (data-set-name-index ds) feature)
-     (future (λ () (update-statistics* empty-statistics (feature-vector ds 'default feature))))))
-  (data-set-statistics ds))
+  (let ([stats-vector (make-vector (length (data-set-features ds)))])
+    (for ([feature (data-set-features ds)])
+      (vector-set!
+        stats-vector
+        (hash-ref (data-set-name-index ds) feature)
+        (future (λ () (update-statistics* empty-statistics (feature-vector ds 'default feature))))))
+    stats-vector))
 
 (define (partition->index who ds index)
   (cond

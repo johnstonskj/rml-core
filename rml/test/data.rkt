@@ -8,6 +8,7 @@
 (require rackunit
          rml/data
          rml/not-implemented
+         racket/string
          math/statistics)
 
 (define iris-data-set
@@ -95,18 +96,15 @@
   (check-exn exn:fail:contract?
     (λ () (feature-statistics iris-data-set "color"))))
 
-; (test-case
-;   "write-snapshot: success"
-;   (let* ([fields (list (make-feature "height") (make-classifier "class"))]
-;          [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)]
-;          [out (open-output-string)])
-;     (write-snapshot dataset out)
-;     (let ([newdata (read-snapshot (open-input-string (get-output-string out)))])
-;       (check-eq? 1 (length (features dataset)))
-;       (check-eq? 1 (length (classifiers dataset)))
-;       (check-eq? 2 (length (classifier-product dataset)))
-;       (check-eq? 1 (partition-count dataset))
-;       (check-eq? 7 (data-count dataset)))))
+ (test-case
+   "write-snapshot: success"
+   (let* ([fields (list (make-feature "height") (make-classifier "class"))]
+          [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)]
+          [out (open-output-string)])
+         (check-eq? (length (features dataset)) 1)
+         (write-snapshot dataset out)
+         (let ([snapshot (get-output-string out)])
+           (check-true (string-prefix? snapshot "(1.0 #hash((")))))
 
 (test-case
   "partition-and-classify: ensure not-implemented"
