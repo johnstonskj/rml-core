@@ -27,11 +27,11 @@
   "load-data-set: successful load (json)"
   (let* ([fields (list (make-feature "height") (make-classifier "class"))]
          [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)])
-    (check-eq? 1 (length (features dataset)))
-    (check-eq? 1 (length (classifiers dataset)))
-    (check-eq? 2 (length (classifier-product dataset)))
-    (check-eq? 1 (partition-count dataset))
-    (check-eq? 7 (data-count dataset))))
+        (check-eq? 1 (length (features dataset)))
+        (check-eq? 1 (length (classifiers dataset)))
+        (check-eq? 2 (length (classifier-product dataset)))
+        (check-eq? 1 (partition-count dataset))
+        (check-eq? 7 (data-count dataset))))
 
 (test-case
   "load-data-set: successful load (csv)"
@@ -44,16 +44,33 @@
   (check-eq? 135 (data-count iris-data-set)))
 
 (test-case
+  "load-data-set: fail with duplicate names"
+  (let ([fields (list (make-feature "height") (make-feature "class") (make-classifier "class"))])
+       (check-exn exn:fail:contract?
+         (λ () (load-data-set (path->string (collection-file-path "test/data.rkt" "rml")) 'racket fields)))))
+
+(test-case
   "load-data-set: fail with bad format"
   (let ([fields (list (make-feature "height") (make-classifier "class"))])
-    (check-exn exn:fail:contract?
-      (λ () (load-data-set (path->string (collection-file-path "test/data.rkt" "rml")) 'racket fields)))))
+       (check-exn exn:fail:contract?
+         (λ () (load-data-set (path->string (collection-file-path "test/data.rkt" "rml")) 'racket fields)))))
 
 (test-case
   "load-data-set: fail with bad file name"
   (let ([fields (list (make-feature "height") (make-classifier "class"))])
-    (check-exn exn:fail:filesystem:errno?
-      (λ () (load-data-set (path->string (collection-file-path "test/simple-fail.json" "rml")) 'json fields)))))
+       (check-exn exn:fail:filesystem:errno?
+         (λ () (load-data-set (path->string (collection-file-path "test/simple-fail.json" "rml")) 'json fields)))))
+
+(test-case
+  "partition: test access"
+  (let* ([fields (list (make-feature "height") (make-classifier "class"))]
+         [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)])
+         (check-eq? 2 (vector-length (partition dataset 0)))
+         (check-eq? 2 (vector-length (partition dataset 'default)))
+         (check-exn exn:fail:contract?
+           (λ () (partition dataset 99)))
+           (check-exn exn:fail:contract?
+             (λ () (partition dataset 'unknown)))))
 
 ; (test-case
 ;   "write-snapshot: success"

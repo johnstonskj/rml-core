@@ -113,7 +113,7 @@
   (data-set-data-count ds))
 
 (define (partition ds index)
-  (let ([partition-index (partition->index 'partition ds partition)])
+  (let ([partition-index (partition->index 'partition ds index)])
     (data-set-partitions ds))) ; TODO: vector of vectors
 
 (define (feature-vector ds partition feature-name)
@@ -173,16 +173,16 @@
      (future (λ () (update-statistics* empty-statistics (feature-vector ds 'default feature))))))
   (data-set-statistics ds))
 
-(define (partition->index who ds partition)
+(define (partition->index who ds index)
   (cond
-    [(number? partition)
-     (when (>= partition (data-set-partition-count ds))
-       (raise-argument-error who (format "< ~s" (data-set-partition-count ds)) 1 who ds partition))]
-    [(eq? partition 'default) 0]
-    [(eq? partition 'training) 0]
-    [(eq? partition 'testing) 1]
+    [(number? index)
+     (when (>= index (data-set-partition-count ds))
+       (raise-argument-error who (format "index < ~s" (data-set-partition-count ds)) 2 who ds index))]
+    [(eq? index 'default) 0]
+    [(eq? index 'training) 0]
+    [(eq? index 'testing) 1]
     [else
-     (raise-argument-error who (format "< ~s" (data-set-partition-count ds)) 1 who ds partition)]))
+     (raise-argument-error who "integer or symbol" 2 who ds index)]))
 
 (define (list-unique-strings lst)
   (set->list (for/set ([v lst]) (format "~a" v))))
