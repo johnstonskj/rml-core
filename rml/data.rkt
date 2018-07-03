@@ -52,12 +52,6 @@
   [partition-for-test
    (-> data-set? (real-in 1.0 50.0) (listof string?) data-set?)]
 
-  [standardize
-   (-> data-set? (non-empty-listof string?) data-set?)]
-
-  [fuzzify
-   (-> data-set? (non-empty-listof string?) data-set?)]
-
   [write-snapshot
    (-> data-set? output-port? void?)]
 
@@ -148,15 +142,6 @@
   (raise-not-implemented))
 
 (define (partition-for-test ds test-percent [entropy-classifiers '()])
-  (raise-not-implemented))
-
-;; ---------- Implementation (Feature Transformation)
-
-(define (standardize data-set features)
-  ; z_{ij} = x_{ij}-μ_j / σ_j
-  (raise-not-implemented))
-
-(define (fuzzify data-set features)
   (raise-not-implemented))
 
 ;; ---------- Implementation (Snapshots)

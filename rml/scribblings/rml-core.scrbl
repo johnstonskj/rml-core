@@ -140,28 +140,30 @@ that do not support name mapping such as CSV.
          (classifiers
            [dataset data-set?])
          (listof string?)]{
-The name of all classifier features in the data set.
+The name of all @italic{classifier} features in the data set.
 }
 
 @defproc[#:kind "accessor"
          (classifier-product
            [dataset data-set?])
          (listof string?)]{
-A list of the cartesian product, of the set of values for each classifier.
+Returns a list with each row being the cartesian product of the unique values of each classifier
+feature. All classifier features are treated as strings and the product is separated by the
+Unicode times character "⨉".
 }
 
 @defproc[#:kind "accessor"
          (features
            [dataset data-set?])
          (listof string?)]{
-The name of all `feature' features in the data set.
+The name of all @italic{feature} features in the data set.
 }
 
 @defproc[#:kind "accessor"
          (data-count
            [dataset data-set?])
          exact-nonnegative-integer?]{
-The number of data rows in the data set.
+The number of data rows in the data set, in all partitions.
 }
 
 @defproc[#:kind "accessor"
@@ -196,7 +198,7 @@ supported symbols.
          (partition-count
            [dataset data-set?])
          exact-nonnegative-integer?]{
-The number of partitions in the data set.
+The number of partitions in the data set, when initially created this is usually 1.
 }
 
 @defproc[#:kind "accessor"
@@ -237,22 +239,6 @@ test data and the remainder the training data.
 
 If specified, the @racket[entropy-features] list denotes the names of
 features, or classifiers, that should be randomly spread across partitions.
-}
-
-@defproc[#:kind "transform"
-         (standardize
-           [features (listof string?)])
-         data-set?]{
-Standardization requires statistics be computed for all features listed in
-@racket[features], and will normalize the values to reduce the effect of large
-outlyer values and enable more efficient distance measures.
-}
-
-@defproc[#:kind "transform"
-         (fuzzify
-           [features (listof string?)])
-         data-set?]{
-TBD
 }
 
 @;{============================================================================}
