@@ -101,10 +101,23 @@
    (let* ([fields (list (make-feature "height") (make-classifier "class"))]
           [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)]
           [out (open-output-string)])
-         (check-eq? (length (features dataset)) 1)
          (write-snapshot dataset out)
          (let ([snapshot (get-output-string out)])
            (check-true (string-prefix? snapshot "(1.0 #hash((")))))
+
+(test-case
+  "read-snapshot: success"
+  (let* ([fields (list (make-feature "height") (make-classifier "class"))]
+         [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)]
+         [out (open-output-string)])
+        (write-snapshot dataset out)
+        (let* ([snapshot (get-output-string out)]
+               [dataset-in (read-snapshot (open-input-string snapshot))])
+              (check-eq? (length (features dataset-in)) (length (features dataset)))
+              (check-eq? (length (classifiers dataset-in)) (length (classifiers dataset)))
+              (check-eq? (length (classifier-product dataset-in)) (length (classifier-product dataset)))
+              (check-eq? (partition-count dataset-in) (partition-count dataset))
+              (check-eq? (data-count dataset-in) (data-count dataset)))))
 
 (test-case
   "partition-and-classify: ensure not-implemented"

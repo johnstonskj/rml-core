@@ -151,7 +151,7 @@
            ,(data-set-name-index ds)
            ,(data-set-features ds)
            ,(data-set-classifiers ds)
-           ,(for/list ([stat (data-set-statistics ds)]) (when (future? stat) (touch stat)))
+           ,(for/vector ([stat (data-set-statistics ds)]) (when (future? stat) (touch stat)))
            ,(data-set-data-count ds)
            ,(data-set-partition-count ds)
            ,(data-set-partitions ds))
