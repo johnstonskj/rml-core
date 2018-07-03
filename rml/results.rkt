@@ -25,8 +25,7 @@
 
 ;; ---------- Requirements
 
-(require rml/data
-         math/array)
+(require rml/data)
 
 ;; ---------- Internal types
 
