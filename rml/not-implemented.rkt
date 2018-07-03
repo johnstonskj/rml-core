@@ -9,7 +9,11 @@
 ;; ~ Simon Johnston 2018.
 ;;
 
-(provide raise-not-implemented)
+(provide
+  
+  exn:fail:not-implemented?
+
+  raise-not-implemented)
 
 ;; ---------- Implementation
 

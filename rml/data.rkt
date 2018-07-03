@@ -12,6 +12,8 @@
 
 (define snapshot-version-number 1.0)
 
+(require "private/dataset.rkt")
+
 (provide
  (contract-out
 
@@ -62,16 +64,17 @@
   [read-snapshot
    (-> input-port? data-set?)])
 
-  data-set?
-  data-set-field?
-
   make-feature
-  make-classifier)
+
+  make-classifier
+
+  data-set?
+
+  data-set-field?)
 
 ;; ---------- Requirements
 
-(require "notimplemented.rkt"
-         "private/dataset.rkt"
+(require "not-implemented.rkt"
          (prefix-in json: "private/json.rkt")
          (prefix-in csv: "private/csv.rkt")
          racket/future
