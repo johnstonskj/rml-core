@@ -1,7 +1,7 @@
 # Racket Machine Learning - Core
 
 [![GitHub release](https://img.shields.io/github/release/johnstonskj/rml-core.svg?style=flat-square)](https://github.com/johnstonskj/rml-core/releases)
-![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)
+[![Travis Status](https://travis-ci.org/johnstonskj/rml-core.svg)](https://www.travis-ci.org/johnstonskj/rml-core)
 [![Coverage Status](https://coveralls.io/repos/github/johnstonskj/rml-core/badge.svg?branch=master)](https://coveralls.io/github/johnstonskj/rml-core?branch=master)
 [![raco pkg install rml-core](https://img.shields.io/badge/raco%20pkg%20install-rml--core-blue.svg)](http://pkgs.racket-lang.org/package/rml-core)
 [![Documentation](https://img.shields.io/badge/raco%20docs-rml--core-blue.svg)](http://docs.racket-lang.org/rml-core/index.html)
