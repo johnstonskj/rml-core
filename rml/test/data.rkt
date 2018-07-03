@@ -9,7 +9,7 @@
          rml/data)
 
 (define iris-data-set
- (load-data-set "./iris_training_data.csv"
+ (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
                 'csv
                 (list
                   (make-feature "sepal-length" #:index 0)
@@ -26,7 +26,7 @@
 (test-case
   "load-data-set: successful load (json)"
   (let* ([fields (list (make-feature "height") (make-classifier "class"))]
-         [dataset (load-data-set "./simple-test.json" 'json fields)])
+         [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)])
     (check-eq? 1 (length (features dataset)))
     (check-eq? 1 (length (classifiers dataset)))
     (check-eq? 2 (length (classifier-product dataset)))

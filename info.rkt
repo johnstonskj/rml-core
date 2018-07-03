@@ -21,4 +21,5 @@
   "scribble-lib"
   "racket-doc"
   "math-doc"
-  "sandbox-lib"))
+  "sandbox-lib"
+  "cover-coveralls"))
