@@ -40,5 +40,5 @@
     ind))
 
 (define (data-set-individual dataset)
-  (make-hash (append (for/list ([name (features dataset)]) (values name #f))
-                     (for/list ([name (classifiers dataset)]) (values name #f)))))
+  (make-hash (append (for/list ([name (features dataset)]) (cons name #f))
+                     (for/list ([name (classifiers dataset)]) (cons name #f)))))
