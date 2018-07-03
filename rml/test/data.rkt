@@ -6,7 +6,8 @@
 ;;
 
 (require rackunit
-         rml/data)
+         rml/data
+         rml/not-implemented)
 
 (define iris-data-set
  (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
@@ -63,14 +64,12 @@
 
 (test-case
   "partition: test access"
-  (let* ([fields (list (make-feature "height") (make-classifier "class"))]
-         [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)])
-         (check-eq? 2 (vector-length (partition dataset 0)))
-         (check-eq? 2 (vector-length (partition dataset 'default)))
-         (check-exn exn:fail:contract?
-           (λ () (partition dataset 99)))
-           (check-exn exn:fail:contract?
-             (λ () (partition dataset 'unknown)))))
+  (check-eq? 5 (vector-length (partition iris-data-set 0)))
+  (check-eq? 5 (vector-length (partition iris-data-set 'default)))
+  (check-exn exn:fail:contract?
+    (λ () (partition iris-data-set 99)))
+  (check-exn exn:fail:contract?
+    (λ () (partition iris-data-set 'unknown))))
 
 ; (test-case
 ;   "write-snapshot: success"
@@ -84,3 +83,13 @@
 ;       (check-eq? 2 (length (classifier-product dataset)))
 ;       (check-eq? 1 (partition-count dataset))
 ;       (check-eq? 7 (data-count dataset)))))
+
+(test-case
+  "partition-and-classify: ensure not-implemented"
+  (check-exn exn:fail:not-implemented?
+    (λ () (partition-equally iris-data-set 5 '()))))
+
+(test-case
+  "partition-for-test: ensure not-implemented"
+  (check-exn exn:fail:not-implemented?
+    (λ () (partition-for-test iris-data-set 25.0 '()))))
