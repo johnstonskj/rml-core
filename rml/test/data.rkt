@@ -79,9 +79,21 @@
        (check-eq? (vector-length fvector) 135)))
 
 (test-case
-  "feature-vector: success"
+  "feature-vector: fail on bad feature name"
+  (check-exn exn:fail:contract?
+    (λ () (feature-vector iris-data-set 'default "color"))))
+
+;; TODO: feature-vector: fail on bad partition index
+
+(test-case
+  "feature-statistics: success"
   (let ([fstats (feature-statistics iris-data-set "sepal-length")])
        (check-true (statistics? fstats))))
+
+(test-case
+  "feature-statistics: fail on bad feature name"
+  (check-exn exn:fail:contract?
+    (λ () (feature-statistics iris-data-set "color"))))
 
 ; (test-case
 ;   "write-snapshot: success"
