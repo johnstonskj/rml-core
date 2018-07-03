@@ -7,7 +7,8 @@
 
 (require rackunit
          rml/data
-         rml/not-implemented)
+         rml/not-implemented
+         math/statistics)
 
 (define iris-data-set
  (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
@@ -28,21 +29,21 @@
   "load-data-set: successful load (json)"
   (let* ([fields (list (make-feature "height") (make-classifier "class"))]
          [dataset (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml")) 'json fields)])
-        (check-eq? 1 (length (features dataset)))
-        (check-eq? 1 (length (classifiers dataset)))
-        (check-eq? 2 (length (classifier-product dataset)))
-        (check-eq? 1 (partition-count dataset))
-        (check-eq? 7 (data-count dataset))))
+        (check-eq? (length (features dataset)) 1)
+        (check-eq? (length (classifiers dataset)) 1)
+        (check-eq? (length (classifier-product dataset)) 2)
+        (check-eq? (partition-count dataset) 1)
+        (check-eq? (data-count dataset) 7)))
 
 (test-case
   "load-data-set: successful load (csv)"
-  (check-eq? 4 (length (features iris-data-set)))
-  (check-eq? 1 (length (classifiers iris-data-set)))
-  (check-eq? 3 (length (classifier-product iris-data-set)))
+  (check-eq? (length (features iris-data-set)) 4)
+  (check-eq? (length (classifiers iris-data-set)) 1)
+  (check-eq? (length (classifier-product iris-data-set)) 3)
   (check-equal? (sort '("sepal-length" "sepal-width" "petal-length" "petal-width" "classification") string<?)
                 (sort (append (features iris-data-set) (classifiers iris-data-set)) string<?))
-  (check-eq? 1 (partition-count iris-data-set))
-  (check-eq? 135 (data-count iris-data-set)))
+  (check-eq? (partition-count iris-data-set) 1)
+  (check-eq? (data-count iris-data-set) 135))
 
 (test-case
   "load-data-set: fail with duplicate names"
@@ -64,12 +65,23 @@
 
 (test-case
   "partition: test access"
-  (check-eq? 5 (vector-length (partition iris-data-set 0)))
-  (check-eq? 5 (vector-length (partition iris-data-set 'default)))
+  (check-eq? (vector-length (partition iris-data-set 0)) 5)
+  (check-eq? (vector-length (partition iris-data-set 'default)) 5)
   (check-exn exn:fail:contract?
     (λ () (partition iris-data-set 99)))
   (check-exn exn:fail:contract?
     (λ () (partition iris-data-set 'unknown))))
+
+(test-case
+  "feature-vector: success"
+  (let ([fvector (feature-vector iris-data-set 'default "sepal-length")])
+       (check-true (vector? fvector))
+       (check-eq? (vector-length fvector) 135)))
+
+(test-case
+  "feature-vector: success"
+  (let ([fstats (feature-statistics iris-data-set "sepal-length")])
+       (check-true (statistics? fstats))))
 
 ; (test-case
 ;   "write-snapshot: success"

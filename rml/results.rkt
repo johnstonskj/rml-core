@@ -51,8 +51,8 @@
   (let ([true-i (hash-ref (confusion-matrix-values C) true-ω)]
         [predicted-i (hash-ref (confusion-matrix-values C) predicted-ω)])
     (vector-set! (vector-ref (confusion-matrix-results C) true-i)
-                  predicted-i
-                  (add1 (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i))))
+                 predicted-i
+                 (add1 (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i))))
   C)
 
 (define (result-value C true-ω predicted-ω)

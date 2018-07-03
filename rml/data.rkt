@@ -138,7 +138,7 @@
 
 ;; ---------- Implementation (Partitioning)
 
-(define (partition-equally ds k [entropy-classifiers '()])
+(define (partition-equally ds p [entropy-classifiers '()])
   (raise-not-implemented))
 
 (define (partition-for-test ds test-percent [entropy-classifiers '()])
