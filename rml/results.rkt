@@ -12,13 +12,13 @@
    (-> any/c boolean?)]
 
   [make-result-matrix
-   (-> data-set? confusion-matrix?)]
+   (-> data-set? result-matrix?)]
 
   [record-result
-   (-> confusion-matrix? any/c any/c confusion-matrix?)]
+   (-> result-matrix? any/c any/c result-matrix?)]
 
-  [result-matrix
-   (-> confusion-matrix? list?)]))
+  [result-matrix-formatted
+   (-> result-matrix? list?)]))
 
 ;; ---------- Requirements
 
@@ -53,7 +53,7 @@
                   (add1 (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i))))
   C)
 
-(define (result-matrix C)
+(define (result-matrix-formatted C)
   (let ([labels (make-hash (hash-map (confusion-matrix-values C) (lambda (k v) (cons v k))))])
     (list*
       (list* "true ω pred" (for/list ([i (range (hash-count labels))]) (hash-ref labels i)))

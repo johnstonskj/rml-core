@@ -346,7 +346,12 @@ and classifiers from @racket[dataset]. All values are initialized to @racket[#f]
 @section[]{Package rml/results}
 @defmodule[rml/results]
 
-TBD
+This packages implements a results matrix, sometimes referred to as a @italic{confusion
+matrix} to record the outcome of classification operations. Specifically the matrix
+uses all distinct classification values (ω) as both rows and columns and maps the
+predicted values to the labeled values incrementing the integer value at the intersection
+for each operation.
+
 
 @;{============================================================================}
 @subsection[#:tag "rml:res-types"]{Types and Predicates}
@@ -355,7 +360,8 @@ TBD
          (result-matrix?
            [a any/c])
          boolean?]{
-TBD}
+Returns @racket[#f] if the value of @racket[a] is a @racket[result-matrix].
+}
 
 @;{============================================================================}
 @subsection[#:tag "rml:res-matrix"]{Construction}
@@ -363,23 +369,29 @@ TBD}
 @defproc[#:kind "constructor"
          (make-result-matrix
            [dataset data-set?])
-         record-matrix?]{
-TBD}
+         result-matrix?]{
+Create a new @racket[result-matrix]}  using the values provided by
+@code[#:lang "racket"]|{(classifier-product dataset)}| as row and column
+indices.
 
 @;{============================================================================}
 @subsection[#:tag "rml:res-record"]{Recording Results}
 
 @defproc[(record-result
-          [C record-matrix?]
+          [C result-matrix?]
           [true-ω any/c]
           [predicted-ω any/c])
-         record-matrix?]{
-TBD}
+         result-matrix?]{
+Increment the result count for in the @racket[result-matrix] for the combination
+of predicted and true/known classifiers.
+}
 
 @defproc[#:kind "accessor"
-         (result-matrix)
-         record-matrix?]{
-TBD}
+         (result-matrix-formatted)
+         result-matrix?]{
+Return a formatted version of the result matrix with label data suitable for display
+or printing.
+}
 
 @;{============================================================================}
 @;{============================================================================}
