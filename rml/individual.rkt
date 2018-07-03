@@ -33,9 +33,9 @@
     (when (not (individual? ind))
         (raise-argument-error 'make-individual "not a valid hash construction list" 0 lst))
     (when dataset
-      (let ([ds-names (set (append (features dataset) (classifiers dataset)))]
-            [in-names (set (hash-keys ind))])
-        (when (not (set-equal? ds-names in-names))
+      (let ([ds-names (list->set (append (features dataset) (classifiers dataset)))]
+            [in-names (list->set (hash-keys ind))])
+        (when (not (set=? ds-names in-names))
           (raise-argument-error 'make-individual "construction list does not match data-set" 0 lst))))
     ind))
 

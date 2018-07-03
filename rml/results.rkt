@@ -17,6 +17,9 @@
   [record-result
    (-> result-matrix? any/c any/c result-matrix?)]
 
+ [result-value
+  (-> result-matrix? any/c any/c integer?)]
+
   [result-matrix-formatted
    (-> result-matrix? list?)]))
 
@@ -52,6 +55,11 @@
                   predicted-i
                   (add1 (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i))))
   C)
+
+(define (result-value C true-ω predicted-ω)
+  (let ([true-i (hash-ref (confusion-matrix-values C) true-ω)]
+        [predicted-i (hash-ref (confusion-matrix-values C) predicted-ω)])
+        (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i)))
 
 (define (result-matrix-formatted C)
   (let ([labels (make-hash (hash-map (confusion-matrix-values C) (lambda (k v) (cons v k))))])

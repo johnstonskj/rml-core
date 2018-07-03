@@ -6,7 +6,6 @@
 ;;
 
 (require rackunit
-         math/array
          rml/data)
 
 (define iris-data-set

@@ -386,6 +386,15 @@ Increment the result count for in the @racket[result-matrix] for the combination
 of predicted and true/known classifiers.
 }
 
+@defproc[(result-value
+          [C result-matrix?]
+          [true-ω any/c]
+          [predicted-ω any/c])
+         integer?]{
+Return the current result count in @racket[result-matrix] for the combination
+of predicted and true/known classifiers.
+}
+
 @defproc[#:kind "accessor"
          (result-matrix-formatted)
          result-matrix?]{

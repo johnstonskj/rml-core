@@ -1,5 +1,6 @@
 PACKAGENAME=rml-core
 COLLECTS=rml
+TESTS=$(COLLECTS)/test
 SCRBL=rml/scribblings/rml-core.scrbl
 
 all: setup
@@ -18,7 +19,7 @@ unlink:
 	raco pkg remove $(PACKAGENAME)
 
 test:
-	raco test -x .
+	raco test $(TESTS)
 
 htmldocs: $(SCRBL)
 	raco scribble \
