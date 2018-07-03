@@ -31,12 +31,23 @@
 (test-case
   "make-result-matrix: success"
   (let ([results (make-result-matrix iris-data-set)])
-    (check-equal? 0 (result-value results "Iris-versicolor" "Iris-versicolor"))))
+    (check-equal? (result-value results "Iris-versicolor" "Iris-versicolor") 0)))
 
 (test-case
   "result-value: bad classifiers"
   (let ([results (make-result-matrix iris-data-set)])
     (check-exn exn:fail:contract?
       (λ () (result-value results "Iris-versicolor" "Not An Iris")))))
+
+(test-case
+  "record-result: success"
+  (let ([results (make-result-matrix iris-data-set)])
+  (check-equal? (result-value results "Iris-versicolor" "Iris-versicolor") 0)
+    (record-result results "Iris-versicolor" "Iris-versicolor")
+    (check-equal? (result-value results "Iris-versicolor" "Iris-versicolor") 1)
+    (record-result results "Iris-versicolor" "Iris-versicolor")
+    (check-equal? (result-value results "Iris-versicolor" "Iris-versicolor") 2)
+    (record-result results "Iris-versicolor" "Iris-versicolor")
+    (check-equal? (result-value results "Iris-versicolor" "Iris-versicolor") 3)))
 
 ;; TODO: tests for result-matrix-formatted
