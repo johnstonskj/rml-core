@@ -139,10 +139,10 @@
 ;; ---------- Implementation (Partitioning)
 
 (define (partition-equally ds p [entropy-classifiers '()])
-  (raise-not-implemented))
+  (raise-not-implemented 'partition-equally))
 
 (define (partition-for-test ds test-percent [entropy-classifiers '()])
-  (raise-not-implemented))
+  (raise-not-implemented 'partition-for-test))
 
 ;; ---------- Implementation (Snapshots)
 
