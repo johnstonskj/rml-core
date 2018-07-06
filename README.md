@@ -24,10 +24,12 @@ See the [rml-knn](https://github.com/johnstonskj/rml-knn) (not quite there yet) 
 
 ## Modules
 
-* `data` - manage data sets, load from CSV and JSON files, save and load snapshots as well as
+* `data` - manages data sets, load from CSV and JSON files, save and load snapshots as well as
 manage partitions and statistics.
+* `individual` - manages individuals when classifying against a data set.
 * `results` - provides a *confusion matrix* that records the results of classification
 as a mapping from true to predicted values.
+* `not-implemented` - really a convenience for raising `fail:unsupported` exceptions.
 
 ## Example
 
@@ -55,6 +57,9 @@ writing a snapshot to the current output port.
 
 (write-snapshot dataset (current-output-port))
 (newline)
+
+(for ([row (result-matrix-formatted (make-result-matrix dataset))])
+  (displayln row))
 ```
 
 The result of `feature-statistics` returns an instance of the `statistics`
