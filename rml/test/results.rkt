@@ -57,6 +57,6 @@
   (let* ([results (make-result-matrix iris-data-set)]
          [printable (result-matrix-formatted results)]
          [xy (add1 (length (classifier-product iris-data-set)))])
-        (check-eq? (first (first printable)) "true ω pred")
+        (check-equal? (first (first printable)) "true ω pred     ")
         (check-eq? (length printable) xy)
         (check-eq? (length (first printable)) xy)))

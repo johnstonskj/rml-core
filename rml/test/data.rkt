@@ -12,14 +12,19 @@
          math/statistics)
 
 (define iris-data-set
- (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
-                'csv
-                (list
-                  (make-feature "sepal-length" #:index 0)
-                  (make-feature "sepal-width" #:index 1)
-                  (make-feature "petal-length" #:index 2)
-                  (make-feature "petal-width" #:index 3)
-                  (make-classifier "classification" #:index 4))))
+  (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
+                 'csv
+                 (list
+                   (make-feature "sepal-length" #:index 0)
+                   (make-feature "sepal-width" #:index 1)
+                   (make-feature "petal-length" #:index 2)
+                   (make-feature "petal-width" #:index 3)
+                   (make-classifier "classification" #:index 4))))
+
+(define small-data-set
+  (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml"))
+                 'json
+                 (list (make-feature "height") (make-classifier "class"))))
 
 (test-case
   "supported-formats: includes core formats"
@@ -120,11 +125,36 @@
               (check-eq? (data-count dataset-in) (data-count dataset)))))
 
 (test-case
-  "partition-and-classify: ensure not-implemented"
+  "partition-equally: ensure not-implemented"
   (check-exn exn:fail:not-implemented?
     (λ () (partition-equally iris-data-set 5 '()))))
 
 (test-case
-  "partition-for-test: ensure not-implemented"
-  (check-exn exn:fail:not-implemented?
-    (λ () (partition-for-test iris-data-set 25.0 '()))))
+  "partition-equally: fail, data-set too small"
+  (check-exn  exn:fail:contract?
+    (λ () (partition-equally small-data-set 5 '()))))
+
+(test-case
+  "partition-equally: fail, partitioned data-set too small"
+  (check-exn  exn:fail:contract?
+    (λ () (partition-equally iris-data-set 15 '()))))
+
+(test-case
+  "partition-for-test: success"
+  (let* ([new-data-set (partition-for-test iris-data-set 25 '())]
+         [training-data (partition new-data-set 'training)]
+         [testing-data (partition new-data-set 'testing)])
+        (check-eq? (partition-count new-data-set) 2)
+        (check-eq? (vector-length (vector-ref training-data 0)) 101)
+        (check-eq? (vector-length (vector-ref testing-data 0)) 34)))
+
+(test-case
+  "partition-for-test: fail, can't partition twice"
+  (let* ([new-data-set (partition-for-test iris-data-set 25 '())])
+        (check-exn  exn:fail:contract?
+          (λ () (partition-for-test new-data-set 25 '())))))
+
+(test-case
+  "partition-for-test: fail, data-set too small"
+  (check-exn  exn:fail:contract?
+    (λ () (partition-for-test small-data-set 25 '()))))

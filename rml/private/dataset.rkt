@@ -40,7 +40,8 @@
   (statistics (vectorof (or/c future? statistics?)))
   (data-count integer?)
   (partition-count integer?)
-  (partitions (vectorof (vectorof any/c)))])
+  ; partitions : vector -> partition : vector -> feature : vector
+  (partitions (vectorof (vectorof (vectorof any/c))))])
 
 ;; ---------- Implementation
 

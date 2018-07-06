@@ -61,9 +61,23 @@
         (vector-ref (vector-ref (confusion-matrix-results C) true-i) predicted-i)))
 
 (define (result-matrix-formatted C)
-  (let ([labels (make-hash (hash-map (confusion-matrix-values C) (lambda (k v) (cons v k))))])
+  (let* ([column-width (apply max (map string-length (hash-keys (confusion-matrix-values C))))]
+         [label (λ (str) (make-label str column-width))]
+         [datum (λ (dat) (make-datum dat column-width))]
+         [labels (make-hash (hash-map (confusion-matrix-values C) (lambda (k v) (cons v k))))])
     (list*
-      (list* "true ω pred" (for/list ([i (range (hash-count labels))]) (hash-ref labels i)))
+      (list* (label "true ω pred") (for/list ([i (range (hash-count labels))]) (label (hash-ref labels i))))
       (for/list ([i (range (hash-count labels))])
-        (list* (list* (hash-ref labels i))
-          (vector->list (vector-ref (confusion-matrix-results C) i)))))))
+        (list* (list* (label (hash-ref labels i)))
+          (map datum (vector->list (vector-ref (confusion-matrix-results C) i))))))))
+
+(define (make-datum datum len)
+  (let ([str (cond
+               [(string? datum) datum]
+               [(number? datum) (number->string datum)]
+               [(symbol? datum) (symbol->string datum)]
+               [else "???"])])
+    (string-append (make-string (- len (string-length str)) #\space) str " ")))
+
+(define (make-label str len)
+  (string-append str (make-string (- len (string-length str)) #\space) " "))

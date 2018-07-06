@@ -50,4 +50,4 @@
                  (make-vector (length all-names))
                  rows
                  1
-                 partition)))
+                 (vector partition))))
