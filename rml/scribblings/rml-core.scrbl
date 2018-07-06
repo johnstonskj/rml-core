@@ -278,7 +278,8 @@ version number is incompatible.
 This module implements a single type, @racket[individual], that is simply a
 constrained @racket[hash]. The hash is constrained to have keys that are all
 @racket[string]s, and should have the same keys as the union of feature and
-classifier names from the data set it will be used with.
+classifier names from the data set it will be used with. This module also
+provides a generator to return individuals for all rows in a partition.
 
 @examples[ #:eval example-eval
 (require rml/individual)
@@ -338,6 +339,27 @@ and classifiers from @racket[dataset]. All values are initialized to @racket[#f]
 (displayln (individual? blank-iris))
 
 (displayln (hash-keys blank-iris))
+]
+}
+
+@;{============================================================================}
+@subsection[#:tag "rml:ind-generate"]{Partition Generator}
+
+@defthing[no-more-individuals symbol?]{
+A symbol that acts as the @italic{stop-value} for @racket[individuals].
+}
+
+@defproc[#:kind "generator"
+         (individuals
+           [dataset data-set?]
+           [partition-id exact-nonnegative-integer?])
+         generator?]{
+This procedure implements a generator and returns each row of a partition as an
+@racket[individual].
+
+@examples[ #:eval example-eval
+(for ([row (in-producer (individuals dataset 0) no-more-individuals)])
+     (displayln row))
 ]
 }
 
