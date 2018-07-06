@@ -72,6 +72,7 @@
          (prefix-in json: "private/json.rkt")
          (prefix-in csv: "private/csv.rkt")
          racket/future
+         racket/generator
          math/statistics)
 
 ;; ---------- Parameters

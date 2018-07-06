@@ -105,3 +105,15 @@
          (sort (hash-keys individual) string<?))
        (check-eq? #f (hash-ref individual "sepal-length"))
        (check-eq? #f (hash-ref individual "classification"))))
+
+(define small-data-set
+ (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml"))
+                'json
+                (list (make-feature "height") (make-classifier "class"))))
+
+(test-case
+  "individuals: generator success"
+  (let ([rows (for/list
+                ([row (in-producer (individuals small-data-set 0) no-more-individuals)])
+                row)])
+       (check-eq? (length rows) (data-count small-data-set))))

@@ -15,11 +15,18 @@
      (-> data-set? individual?)]
 
     [individual?
-     (-> any/c boolean?)]))
+     (-> any/c boolean?)]
+
+    [no-more-individuals symbol?]
+
+    [individuals
+     (-> data-set? exact-nonnegative-integer? generator?)]))
 
 ;; ---------- Requirements
 
-(require "data.rkt")
+(require "data.rkt"
+         "private/dataset.rkt"
+         racket/generator)
 
 ;; ---------- Implementation
 
@@ -40,5 +47,15 @@
     ind))
 
 (define (data-set-individual dataset)
-  (make-hash (append (for/list ([name (features dataset)]) (cons name #f))
-                     (for/list ([name (classifiers dataset)]) (cons name #f)))))
+  (make-hash (hash-map (data-set-name-index dataset) (λ (k v) (cons k #f)))))
+
+(define no-more-individuals (gensym))
+
+(define (individuals ds partition-id)
+ (generator ()
+   (let ([source (partition ds partition-id)])
+        (for ([row (range (vector-length (vector-ref source 0)))])
+             (yield (make-hash
+               (hash-map (data-set-name-index ds)
+                         (λ (k v) (cons k (vector-ref (vector-ref source (hash-ref (data-set-name-index ds) k)) row)))))))
+        no-more-individuals)))
