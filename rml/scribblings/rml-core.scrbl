@@ -353,7 +353,9 @@ predicted values to the labeled values incrementing the integer value at the int
 for each operation.
 
 @examples[ #:eval example-eval
+; Create a result matrix from the Iris data set
 (define results (make-result-matrix dataset))
+; Display the (empty) matrix
 (for ([row (result-matrix-formatted results)])
   (displayln row))
 ]
