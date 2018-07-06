@@ -3,3 +3,4 @@
 .#*.rkt
 compiled/
 /rml/doc/
+/coverage/

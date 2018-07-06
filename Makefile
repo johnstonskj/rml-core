@@ -1,13 +1,14 @@
 PACKAGENAME=rml-core
 COLLECTS=rml
 TESTS=$(COLLECTS)/test
-SCRBL=rml/scribblings/rml-core.scrbl
+SCRBL=$(COLLECTS)/scribblings/$(PACKAGENAME).scrbl
 
-all: setup
+all: setup test
 
 clean:
 	find . -name compiled -type d | xargs rm -rf
-	rm -rf htmldocs
+	rm -rf $(COLLECTS)/doc
+	rm -rf coverage
 
 setup:
 	raco setup --tidy $(COLLECTS)
@@ -21,10 +22,13 @@ unlink:
 test:
 	raco test $(TESTS)
 
+coverage:
+	raco cover -b -f coveralls -p $(PACKAGENAME)
+
 htmldocs: $(SCRBL)
 	raco scribble \
 		--html \
-		--dest rml/doc \
+		--dest $(COLLECTS)/doc \
 		--dest-name index \
 		++main-xref-in \
 		--redirect-main http://docs.racket-lang.org/ \
