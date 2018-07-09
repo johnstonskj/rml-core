@@ -9,22 +9,8 @@
          rml/data
          rml/not-implemented
          racket/string
-         math/statistics)
-
-(define iris-data-set
-  (load-data-set (path->string (collection-file-path "test/iris_training_data.csv" "rml"))
-                 'csv
-                 (list
-                   (make-feature "sepal-length" #:index 0)
-                   (make-feature "sepal-width" #:index 1)
-                   (make-feature "petal-length" #:index 2)
-                   (make-feature "petal-width" #:index 3)
-                   (make-classifier "classification" #:index 4))))
-
-(define small-data-set
-  (load-data-set (path->string (collection-file-path "test/simple-test.json" "rml"))
-                 'json
-                 (list (make-feature "height") (make-classifier "class"))))
+         math/statistics
+         "data-sets.rkt")
 
 (test-case
   "supported-formats: includes core formats"
