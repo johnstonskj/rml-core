@@ -186,14 +186,6 @@ The number of data rows in the data set, in all partitions.
 }
 
 @defproc[#:kind "accessor"
-         (feature-statistics
-           [dataset data-set?]
-           [feature-name string?])
-         statistics?]{
-A @racket[statistics] structure (from @racket[math/statistics]) for the feature @racket[feature-name].
-}
-
-@defproc[#:kind "accessor"
          (feature-vector
            [dataset data-set?]
            [partition-id (or/c exact-nonnegative-integer? symbol?)]
@@ -227,6 +219,36 @@ The number of partitions in the data set, when initially created this is usually
          (vectorof vector?)]{
 The partition (vector of feature vectors) data itself. See @racket[feature-vector] for details of
 @racket[partition-id] symbols.
+}
+
+@;{============================================================================}
+@subsection[]{Statistics}
+
+@defproc[#:kind "accessor"
+         (feature-statistics
+           [dataset data-set?]
+           [feature-name string?])
+         statistics?]{
+A @racket[statistics] structure (from @racket[math/statistics]) for the feature @racket[feature-name].
+}
+
+@defproc[#:kind "transform"
+         (standardize
+           [features (listof string?)])
+         data-set?]{
+Standardization requires statistics be computed for all features listed in
+@racket[features], and will normalize the values to reduce the effect of large
+outlyer values and enable more efficient distance measures.
+
+From @hyperlink["http://www.scholarpedia.org/article/K-nearest_neighbor" "Scholarpedia"]}:
+
+@italic{… removes scale effects caused by use of features with different measurement
+scales. For example, if one feature is based on patient weight in units of kg and
+another feature is based on blood protein values in units of ng/dL in the range
+[-3,3], then patient weight will have a much greater influence on the distance
+between samples and may bias the performance of the classifier. Standardization
+transforms raw feature values into z-scores using the mean and standard deviation
+of a feature values over all input samples}
 }
 
 @;{============================================================================}

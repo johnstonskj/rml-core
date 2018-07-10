@@ -43,6 +43,9 @@
   [feature-statistics
    (-> data-set? string? statistics?)]
 
+  [standardize
+   (-> data-set? (listof string?) data-set?)]
+
   [classifier-product
    (-> data-set? (listof string?))]
 
@@ -129,12 +132,6 @@
          [a-part (partition ds partition-index)])
     (vector-ref a-part feature-index)))
 
-(define (feature-statistics ds feature-name)
-  (when (not (hash-has-key? (data-set-name-index ds) feature-name))
-    (raise-argument-error 'feature-vector (format "one of: ~s" (hash-keys (data-set-name-index ds))) 2 data-set partition feature-name))
-  (let ([feature-index (hash-ref (data-set-name-index ds) feature-name)])
-    (touch (vector-ref (data-set-statistics ds) feature-index))))
-
 (define (classifier-product ds)
   (let* ([names (classifiers ds)]
          [part (partition ds 'default)])
@@ -142,6 +139,18 @@
           (map (λ (name)
             (vector-ref part (hash-ref (data-set-name-index ds) name)))
             names))))
+
+;; ---------- Implementation (Statistics)
+
+(define (feature-statistics ds feature-name)
+  (when (not (hash-has-key? (data-set-name-index ds) feature-name))
+    (raise-argument-error 'feature-vector (format "one of: ~s" (hash-keys (data-set-name-index ds))) 2 data-set partition feature-name))
+  (let ([feature-index (hash-ref (data-set-name-index ds) feature-name)])
+    (touch (vector-ref (data-set-statistics ds) feature-index))))
+
+(define (standardize data-set features)
+  ; z_{ij} = x_{ij}-μ_j / σ_j
+  (raise-not-implemented 'standardize))
 
 ;; ---------- Implementation (Partitioning)
 

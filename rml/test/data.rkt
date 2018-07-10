@@ -87,6 +87,11 @@
   (check-exn exn:fail:contract?
     (λ () (feature-statistics iris-data-set "color"))))
 
+(test-case
+  "standardize: ensure not-implemented"
+  (check-exn exn:fail:not-implemented?
+    (λ () (standardize iris-data-set '()))))
+
  (test-case
    "write-snapshot: success"
    (let* ([fields (list (make-feature "height") (make-classifier "class"))]
