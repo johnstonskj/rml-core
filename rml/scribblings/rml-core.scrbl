@@ -2,6 +2,8 @@
 
 @(require racket/sandbox
           scribble/eval
+          rml/data
+          rml/individual
           (for-label rml/data
                      rml/individual
                      rml/not-implemented
@@ -13,6 +15,26 @@
 @(define example-eval (make-base-eval
                        '(require rml/data rml/individual rml/results rml/not-implemented)))
 
+@(interaction-eval #:eval example-eval
+  (begin
+    (define (make-my-classifier a b) (λ (ds i) '("Iris-versicolor")))
+    (define iris-data-set
+      (load-data-set "test/iris_training_data.csv"
+                     'csv
+                     (list
+                       (make-feature "sepal-length" #:index 0)
+                       (make-feature "sepal-width" #:index 1)
+                       (make-feature "petal-length" #:index 2)
+                       (make-feature "petal-width" #:index 3)
+                       (make-classifier "classification" #:index 4))))
+    (define an-iris
+      (make-individual
+        "sepal-length" 6.3
+        "sepal-width" 2.5
+        "petal-length" 4.9
+        "petal-width" 1.5
+        "classification" "Iris-versicolor"))))
+
 @;{============================================================================}
 
 @title[#:tag "ml" #:version "1.0"]{Racket Machine Learning --- Core}
@@ -20,9 +42,10 @@
 
 This Package is part of an expected set of packages implementing machine learning capabilities
 for Racket. The core of this package is the management of @italic{data sets}, @italic{individuals},
-and @italic{results}.
+and @italic{results} and the @italic{classification} of individuals against known data sets.
 
 @itemlist[
+  @item{@bold{classify} --- Provides algorithm-neutral higher-order functions for classification.}
   @item{@bold{data-set} --- An abstraction to load the features, vector data, and classifiers
       used by learning capabilities.}
   @item{@bold{individual} --- An individual to be classified or otherwise passed to a Learning
@@ -33,10 +56,6 @@ and @italic{results}.
 This package does not assume anything about specific capabilities, and uses an expansive notion of
 machine learning that should cover statistical inferencing, tree and decision matrix models, as
 well as deep leaning approaches.
-
-You can view the source on @hyperlink[
-  "https://github.com/johnstonskj/rml-core"
-  "GitHub"].
 
 @table-of-contents[]
 
@@ -361,6 +380,69 @@ This procedure implements a generator and returns each row of a partition as an
 (for ([row (in-producer (individuals dataset 0) no-more-individuals)])
      (displayln row))
 ]
+}
+
+@;{============================================================================}
+@;{============================================================================}
+@section[]{Package rml/classify}
+@defmodule[rml/classify]
+
+This module provides higher order functions to run classifiers over data sets.
+Specific @italic{algorithm} modules are expected to provide classifier functions
+that this module can use over data sets.
+
+@examples[#:eval example-eval
+(require rml/data rml/individual rml/classify)
+(define my-classifier (make-my-classifier 5 95.0))
+(displayln (classify iris-data-set an-iris my-classifier))
+]
+
+In this example we create a classifier using the algorithm-specific function
+@racket[make-my-classifier] and use it in the call to @racket[classify] to
+predict classification values for the individual @racket[an-iris].
+
+@;{============================================================================}
+
+@defthing[classifier/c contract?]{
+Supplies a contract that defines classifier functions that are used by the higher
+order functions in this module. Typically one would expect that an algorithm
+provider would include a factory function, of the form
+@racket[(-> args ... classifier/c)].
+}
+
+@defproc[(classify
+           [dataset data-set?]
+           [individual individual?]
+           [classifier classifier/c])
+         list?]{
+This procedure will return a list of classifier values predicted for the provided
+@racket[individual] based on the specific algorithm implemented by @racket[classifier].
+}
+
+@;{============================================================================}
+@subsection[]{Partitioned Classification}
+
+@defproc[(partitioned-test-classify
+           [dataset data-set?]
+           [train-percentage (real-in 1.0 50.0)]
+           [classifier classifier/c])
+         result-matrix?]{
+This form of training uses the @racket[partition-for-test] procedure to create two
+partitions, a training data partition and a test data partition. It then classifies
+all the individuals in the test partition against the training partition and records
+the results in a @racket[result-matrix]. The result matrix can be inspected to determine
+the accuracy of the classifier.
+}
+
+@defproc[(cross-classify
+           [dataset data-set?]
+           [partition-count exact-positive-integer?]
+           [classifier classifier/c])
+         result-matrix?]{
+This form of training uses the @racket[partition-equally] procedure to create
+@racket[partition-count] partitions. Each partition is then classified against
+all the others and the results are collated into a single @racket[result-matrix].
+The result matrix can then be inspected to determine the accuracy of the classifier.
 }
 
 @;{============================================================================}

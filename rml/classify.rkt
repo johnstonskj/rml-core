@@ -7,16 +7,16 @@
 (provide
  (contract-out
 
-  [classify
-   (-> data-set? classifier/c list?)]
+  [classifier/c contract?]
 
-  [test-classify
+  [classify
+   (-> data-set? individual? classifier/c list?)]
+
+  [partitioned-test-classify
    (-> data-set? (real-in 1.0 50.0) classifier/c result-matrix?)]
 
   [cross-classify
-   (-> data-set? exact-positive-integer? classifier/c result-matrix?)])
-
-  classifier/c)
+   (-> data-set? exact-positive-integer? classifier/c result-matrix?)]))
 
 ;; ---------- Requirements
 
@@ -31,10 +31,10 @@
   ; TODO: this should return a hash of classifiers
   (-> data-set? individual? (listof string?)))
 
-(define (classify data-set classifier)
-  (raise-not-implemented 'cross-train))
+(define (classify data-set individual classifier)
+  (classifier data-set individual))
 
-(define (test-classify data-set partition-pc classifier)
+(define (partitioned-test-classify data-set partition-pc classifier)
   (let* ([partitioned (partition-for-test data-set partition-pc '())]
          [training (partition partitioned 'training)]
          [testing (partition partitioned 'testing)]

@@ -15,8 +15,8 @@
   (list (hash-ref an-individual "classification")))
 
 (test-case
-  "partition-and-classify: ensure not-implemented"
-  (let ([results (partition-and-classify iris-data-set 25.0 test-classifier)])
+  "partition-and-classify: success with dummy classifier"
+  (let ([results (partitioned-test-classify iris-data-set 25.0 test-classifier)])
     (check-eq? (result-value results "Iris-virginica" "Iris-virginica") 45)
     (check-eq? (result-value results "Iris-versicolor" "Iris-versicolor") 45)
     (check-eq? (result-value results "Iris-setosa" "Iris-setosa") 45)))
