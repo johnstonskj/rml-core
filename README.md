@@ -27,6 +27,8 @@ See the [rml-knn](https://github.com/johnstonskj/rml-knn) (not quite there yet) 
 * `data` - manages data sets, load from CSV and JSON files, save and load snapshots as well as
 manage partitions and statistics.
 * `individual` - manages individuals when classifying against a data set.
+* `classify` - describes a contract for classifier functions and a set of higher-order 
+cross-classifiers over data sets.
 * `results` - provides a *confusion matrix* that records the results of classification
 as a mapping from true to predicted values.
 * `not-implemented` - really a convenience for raising `fail:unsupported` exceptions.
