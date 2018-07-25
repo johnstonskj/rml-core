@@ -28,6 +28,12 @@
   [classifiers
    (-> data-set? (listof string?))]
 
+  [default-partition exact-nonnegative-integer?]
+
+  [training-partition exact-nonnegative-integer?]
+
+  [test-partition  exact-nonnegative-integer?]
+
   [partition-count
    (-> data-set? exact-nonnegative-integer?)]
 
@@ -71,13 +77,7 @@
 
   minimum-partition-data-total
 
-  minimum-partition-data
-
-  default-partition
-
-  training-partition
-
-  test-partition)
+  minimum-partition-data)
 
 ;; ---------- Requirements
 
