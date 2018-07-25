@@ -61,7 +61,7 @@ well as deep leaning approaches.
 
 @;{============================================================================}
 @;{============================================================================}
-@section[]{Package rml/data}
+@section[]{Module rml/data}
 @defmodule[rml/data]
 
 This module deals with two opaque structure types, @racket[data-set] and @racket[data-set-field].
@@ -327,7 +327,7 @@ version number is incompatible.
 
 @;{============================================================================}
 @;{============================================================================}
-@section[]{Package rml/individual}
+@section[]{Module rml/individual}
 @defmodule[rml/individual]
 
 This module implements a single type, @racket[individual], that is simply a
@@ -420,7 +420,7 @@ This procedure implements a generator and returns each row of a partition as an
 
 @;{============================================================================}
 @;{============================================================================}
-@section[]{Package rml/classify}
+@section[]{Module rml/classify}
 @defmodule[rml/classify]
 
 This module provides higher order functions to run classifiers over data sets.
@@ -484,7 +484,7 @@ The result matrix can then be inspected to determine the accuracy of the classif
 
 @;{============================================================================}
 @;{============================================================================}
-@section[]{Package rml/results}
+@section[]{Module rml/results}
 @defmodule[rml/results]
 
 This packages implements a results matrix, sometimes referred to as a @italic{confusion
@@ -551,7 +551,7 @@ or printing.
 
 @;{============================================================================}
 @;{============================================================================}
-@section[]{Package rml/not-implemented}
+@section[]{Module rml/not-implemented}
 @defmodule[rml/not-implemented]
 
 This is a common utility module, it provides a single procedure,
