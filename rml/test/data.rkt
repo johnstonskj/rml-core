@@ -58,7 +58,7 @@
 (test-case
   "partition: test access"
   (check-eq? (vector-length (partition iris-data-set 0)) 5)
-  (check-eq? (vector-length (partition iris-data-set 'default)) 5)
+  (check-eq? (vector-length (partition iris-data-set default-partition)) 5)
   (check-exn exn:fail:contract?
     (λ () (partition iris-data-set 99)))
   (check-exn exn:fail:contract?
@@ -66,7 +66,7 @@
 
 (test-case
   "feature-vector: success"
-  (let ([fvector (feature-vector iris-data-set 'default "sepal-length")])
+  (let ([fvector (feature-vector iris-data-set default-partition "sepal-length")])
        (check-true (vector? fvector))
        (check-eq? (vector-length fvector) 135)))
 
@@ -116,9 +116,19 @@
               (check-eq? (data-count dataset-in) (data-count dataset)))))
 
 (test-case
-  "partition-equally: ensure not-implemented"
-  (check-exn exn:fail:not-implemented?
-    (λ () (partition-equally iris-data-set 5 '()))))
+  "partition-equally: success"
+  (let ([new-data-set (partition-equally iris-data-set 4 '())])
+    (check-eq? (partition-count new-data-set) 4)
+    (check-eq? (vector-length (feature-vector new-data-set 0 "sepal-width")) 34)
+    (check-eq? (vector-length (feature-vector new-data-set 1 "sepal-width")) 34)
+    (check-eq? (vector-length (feature-vector new-data-set 2 "sepal-width")) 34)
+    (check-eq? (vector-length (feature-vector new-data-set 3 "sepal-width")) 33)))
+
+(test-case
+  "partition-equally: fail, can't partition twice"
+  (let* ([new-data-set (partition-equally iris-data-set 3 '())])
+        (check-exn  exn:fail:contract?
+          (λ () (partition-equally new-data-set 3 '())))))
 
 (test-case
   "partition-equally: fail, data-set too small"
@@ -133,8 +143,8 @@
 (test-case
   "partition-for-test: success"
   (let* ([new-data-set (partition-for-test iris-data-set 25 '())]
-         [training-data (partition new-data-set 'training)]
-         [testing-data (partition new-data-set 'testing)])
+         [training-data (partition new-data-set training-partition)]
+         [testing-data (partition new-data-set test-partition)])
         (check-eq? (partition-count new-data-set) 2)
         (check-eq? (vector-length (vector-ref training-data 0)) 101)
         (check-eq? (vector-length (vector-ref testing-data 0)) 34)))

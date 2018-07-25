@@ -17,7 +17,7 @@
 
 @(interaction-eval #:eval example-eval
   (begin
-    (define (make-my-classifier a b) (λ (ds i) '("Iris-versicolor")))
+    (define (make-my-classifier a b) (λ (ds p i) '("Iris-versicolor")))
     (define iris-data-set
       (load-data-set "test/iris_training_data.csv"
                      'csv
@@ -99,7 +99,7 @@ In this code block a training data set is loaded and the columns within the CSV 
 described.
 
 @;{============================================================================}
-@subsection[#:tag "rml:data-types"]{Types and Predicates}
+@subsection[]{Types and Predicates}
 
 @defproc[#:kind "predicate"
          (data-set?
@@ -118,7 +118,7 @@ primarily used as a contract predicate.
 }
 
 @;{============================================================================}
-@subsection[#:tag "rml:data-construct"]{Construction}
+@subsection[]{Construction}
 
 @defproc[(load-data-set
            [file-name string?]
@@ -133,7 +133,8 @@ Returns a new @racket[data-set], with the specified @italic{features} and
 Returns a list of file formats supported by the @racket[load-data-set] function.
 }
 
-@defproc[(make-feature
+@defproc[#:kind "constructor"
+         (make-feature
           [name string?]
           [#:index integer? 0])
          (data-set-field?)]{
@@ -142,7 +143,8 @@ the source column index of @racket[index]. The index value is important for form
 that do not support name mapping such as CSV.
 }
 
-@defproc[(make-classifier
+@defproc[#:kind "constructor"
+         (make-classifier
           [name string?]
           [#:index integer? 0])
          (data-set-field?)]{
@@ -188,21 +190,10 @@ The number of data rows in the data set, in all partitions.
 @defproc[#:kind "accessor"
          (feature-vector
            [dataset data-set?]
-           [partition-id (or/c exact-nonnegative-integer? symbol?)]
+           [partition-id exact-nonnegative-integer?]
            [feature-name string?])
          (vectorof number?)]{
-The vector of underlying data for the feature @racket[feature-name]. Note that @racket[partition-id]
-may either be an integer representing the index of the partition (o-based), or one of the following
-supported symbols.
-
-@itemlist[
-  @item{@racket['default] --- by default no partitioning is done when reading a @racket[data-set].
-    This symbol is used to denote the identity of this default, single, partition.}
-  @item{@racket['training] --- after a call to @racket[partition-for-test] two partitions are returned.
-    This symbol is used to denote the identity of training data.}
-  @item{@racket['testing] --- after a call to @racket[partition-for-test] two partitions are returned.
-    This symbol is used to denote the identity of test data.}
-]
+The vector of underlying data, in the given partition, for the feature @racket[feature-name].
 }
 
 @defproc[#:kind "accessor"
@@ -215,10 +206,21 @@ The number of partitions in the data set, when initially created this is usually
 @defproc[#:kind "accessor"
          (partition
            [dataset data-set?]
-           [partition-id (or/c exact-nonnegative-integer? symbol?)])
+           [partition-id exact-nonnegative-integer?])
          (vectorof vector?)]{
-The partition (vector of feature vectors) data itself. See @racket[feature-vector] for details of
-@racket[partition-id] symbols.
+The partition data itself (a @racket[vector] of feature @racket[vector]s).
+}
+
+@defthing[default-partition exact-nonnegative-integer?]{
+The identifier for the default parttion created by @racket[load-data-set].
+}
+
+@defthing[test-partition exact-nonnegative-integer?]{
+The identifier for the default test data parttion created by @racket[partition-for-test].
+}
+
+@defthing[training-partition exact-nonnegative-integer?]{
+The identifier for the default training data parttion created by @racket[partition-for-test].
 }
 
 @;{============================================================================}
@@ -252,14 +254,13 @@ of a feature values over all input samples}
 }
 
 @;{============================================================================}
-@subsection[#:tag "rml:data-transforms"]{Transformations}
+@subsection[]{Transformations}
 
 The following procedures perform transformations on one or more @racket[data-set]
 structures and return a new @racket[data-set]. These are typically concerned with
 partitioning a data set or optimizing the feature vectors.
 
-@defproc[#:kind "transform"
-         (partition-equally
+@defproc[(partition-equally
            [partition-count exact-positive-integer?]
            [entropy-features (listof string?) '()])
          data-set?]{
@@ -269,8 +270,7 @@ vectors). If specified, the @racket[entropy-features] list denotes the names of
 features, or classifiers, that should be randomly spread across partitions.
 }
 
-@defproc[#:kind "transform"
-         (partition-for-test
+@defproc[(partition-for-test
            [test-percentage (real-in 1.0 50.0)]
            [entropy-features (listof string?) '()])
          data-set?]{
@@ -282,8 +282,22 @@ If specified, the @racket[entropy-features] list denotes the names of
 features, or classifiers, that should be randomly spread across partitions.
 }
 
+@defparam[minimum-partition-data-total partition-data-count exact-positive-integer?
+          #:value 100]{
+This parameter is used to control the @racket[partition-equally] and
+@racket[partition-for-test] functions and denotes the minimum number of
+rows in the source partition to make sense to sub-divide.
+}
+
+@defparam[minimum-partition-data partition-data-count exact-positive-integer?
+          #:value 100]{
+This parameter is used to control the @racket[partition-equally] and
+@racket[partition-for-test] functions and denotes the minimum number of
+rows that would result in each constructed partition.
+}
+
 @;{============================================================================}
-@subsection[#:tag "rml:data-snapshots"]{Snapshots}
+@subsection[]{Snapshots}
 
 Loading and manipulating data sets from source files may not always be efficient
 and so the parsed in-memory format can be saved and loaded externally. These
@@ -341,7 +355,7 @@ This code block shows the creation of a simple @racket[individual] matching the
 Iris data set.
 
 @;{============================================================================}
-@subsection[#:tag "rml:ind-types"]{Types and Predicates}
+@subsection[#:tag "ind:types_and_predicates"]{Types and Predicates}
 
 @defproc[#:kind "predicate"
          (individual?
@@ -351,7 +365,7 @@ Returns @racket[#t] if the value @racket[a] is an @racket[individual].
 }
 
 @;{============================================================================}
-@subsection[#:tag "rml:ind-construct"]{Construction}
+@subsection[#:tag "ind:construction"]{Construction}
 
 @defproc[#:kind "constructor"
          (make-individual [key any/c] [val any/c] ... ...
@@ -384,7 +398,7 @@ and classifiers from @racket[dataset]. All values are initialized to @racket[#f]
 }
 
 @;{============================================================================}
-@subsection[#:tag "rml:ind-generate"]{Partition Generator}
+@subsection[]{Partition Generator}
 
 @defthing[no-more-individuals symbol?]{
 A symbol that acts as the @italic{stop-value} for @racket[individuals].
@@ -416,7 +430,7 @@ that this module can use over data sets.
 @examples[#:eval example-eval
 (require rml/data rml/individual rml/classify)
 (define my-classifier (make-my-classifier 5 95.0))
-(displayln (classify iris-data-set an-iris my-classifier))
+(displayln (classify iris-data-set default-partition an-iris my-classifier))
 ]
 
 In this example we create a classifier using the algorithm-specific function
@@ -482,12 +496,11 @@ for each operation.
 ; Create a result matrix from the Iris data set
 (define results (make-result-matrix dataset))
 ; Display the (empty) matrix
-(for ([row (result-matrix-formatted results)])
-  (displayln row))
+(for-each displayln (result-matrix-formatted results))
 ]
 
 @;{============================================================================}
-@subsection[#:tag "rml:res-types"]{Types and Predicates}
+@subsection[#:tag "res:types_and_predicates"]{Types and Predicates}
 
 @defproc[#:kind "predicate"
          (result-matrix?
@@ -497,7 +510,7 @@ Returns @racket[#f] if the value of @racket[a] is a @racket[result-matrix].
 }
 
 @;{============================================================================}
-@subsection[#:tag "rml:res-matrix"]{Construction}
+@subsection[#:tag "res:constructions"]{Construction}
 
 @defproc[#:kind "constructor"
          (make-result-matrix
@@ -508,7 +521,7 @@ Create a new @racket[result-matrix]}  using the values provided by
 indices.
 
 @;{============================================================================}
-@subsection[#:tag "rml:res-record"]{Recording Results}
+@subsection[]{Recording Results}
 
 @defproc[(record-result
           [C result-matrix?]
@@ -553,7 +566,6 @@ of this, or any related package.
 
 (fuzzify dataset '())
 ]
-
 
 @defproc[#:kind "predicate"
          (exn:fail:not-implmented?
