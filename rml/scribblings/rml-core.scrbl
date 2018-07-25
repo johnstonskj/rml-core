@@ -448,6 +448,7 @@ provider would include a factory function, of the form
 
 @defproc[(classify
            [dataset data-set?]
+           [against-partition exact-positive-integer?]
            [individual individual?]
            [classifier classifier/c])
          list?]{
