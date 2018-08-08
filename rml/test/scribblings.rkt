@@ -18,7 +18,7 @@
  (for ([module (list 'rml/classify
                      'rml/data
                      'rml/individual
-                     'rml/not-implemented
+                     ;'rml/not-implemented
                      'rml/results)])
   (let ([s (open-output-string)])
       (parameterize ([current-error-port s])

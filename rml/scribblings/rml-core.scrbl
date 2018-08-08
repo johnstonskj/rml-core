@@ -576,6 +576,9 @@ Returns @racket[#t] if the value of @racket[a] is an instance of the
 @racket[exn:fail:not-implmented] exception.
 }
 
-@defform[(raise-not-implemented)]{
+@defproc[(raise-not-implemented
+          [name (or/c symbol? string?)]
+          [message string?])
+         any]{
 Raises a @racket[exn:fail:not-implmented] exception.
 }
