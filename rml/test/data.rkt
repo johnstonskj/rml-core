@@ -5,12 +5,21 @@
 ;; ~ Simon Johnston 2018.
 ;;
 
+;; ---------- Requirements
+
 (require rackunit
-         rml/data
-         rml/not-implemented
          racket/string
          math/statistics
+         ; ---------
+         rml/data
+         rml/not-implemented
          "data-sets.rkt")
+
+;; ---------- Test Fixtures
+
+;; ---------- Internal procedures
+
+;; ---------- Test Cases
 
 (test-case
   "supported-formats: includes core formats"
@@ -77,21 +86,6 @@
 
 ;; TODO: feature-vector: fail on bad partition index
 
-(test-case
-  "feature-statistics: success"
-  (let ([fstats (feature-statistics iris-data-set "sepal-length")])
-       (check-true (statistics? fstats))))
-
-(test-case
-  "feature-statistics: fail on bad feature name"
-  (check-exn exn:fail:contract?
-    (λ () (feature-statistics iris-data-set "color"))))
-
-(test-case
-  "standardize: ensure not-implemented"
-  (check-exn exn:fail:not-implemented?
-    (λ () (standardize iris-data-set '()))))
-
  (test-case
    "write-snapshot: success"
    (let* ([fields (list (make-feature "height") (make-classifier "class"))]
@@ -99,7 +93,7 @@
           [out (open-output-string)])
          (write-snapshot dataset out)
          (let ([snapshot (get-output-string out)])
-           (check-true (string-prefix? snapshot "(1.0 #hash((")))))
+           (check-true (string-prefix? snapshot "(1.1 #hash((")))))
 
 (test-case
   "read-snapshot: success"

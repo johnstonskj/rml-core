@@ -10,7 +10,7 @@
 ;; ~ Simon Johnston 2018.
 ;;
 
-(define snapshot-version-number 1.0)
+(define snapshot-version-number 1.1)
 
 (require "private/dataset.rkt")
 
@@ -28,11 +28,11 @@
   [classifiers
    (-> data-set? (listof string?))]
 
-  [default-partition exact-nonnegative-integer?]
+  [default-partition partition-id?]
 
-  [training-partition exact-nonnegative-integer?]
+  [training-partition partition-id?]
 
-  [test-partition  exact-nonnegative-integer?]
+  [test-partition  partition-id?]
 
   [partition-count
    (-> data-set? exact-nonnegative-integer?)]
@@ -41,16 +41,10 @@
    (-> data-set? exact-nonnegative-integer?)]
 
   [partition
-   (-> data-set? exact-nonnegative-integer? (vectorof vector?))]
+   (-> data-set? partition-id? (vectorof vector?))]
 
   [feature-vector
-   (-> data-set? exact-nonnegative-integer? string? vector?)]
-
-  [feature-statistics
-   (-> data-set? string? statistics?)]
-
-  [standardize
-   (-> data-set? (listof string?) data-set?)]
+   (-> data-set? partition-id? string? vector?)]
 
   [classifier-product
    (-> data-set? (listof string?))]
@@ -75,18 +69,20 @@
 
   data-set-field?
 
+  partition-id?
+
   minimum-partition-data-total
 
   minimum-partition-data)
 
 ;; ---------- Requirements
 
-(require "not-implemented.rkt"
+(require racket/future
+         math/statistics
+         "not-implemented.rkt"
          (prefix-in json: "private/json.rkt")
          (prefix-in csv: "private/csv.rkt")
-         racket/future
-         racket/generator
-         math/statistics)
+         )
 
 ;; ---------- Parameters
 
@@ -95,6 +91,8 @@
 (define minimum-partition-data (make-parameter 20))
 
 ;; ---------- Implementation
+
+(define partition-id? exact-nonnegative-integer?)
 
 (define default-partition 0)
 
@@ -112,13 +110,14 @@
             (json:load-data-set name fields)]
            [(member file-format csv:supported-formats)
             (csv:load-data-set name fields)]
-           [else (raise-argument-error 'load-data-set (format "one of: ~s" supported-formats) 1 name file-format fields)])])
+           [else (raise-argument-error 'load-data-set
+                                       (format "one of: ~s" supported-formats)
+                                       1 name file-format fields)])])
     (data-set (make-hash
                (for/list ([i (range (length fields))])
                  (cons (data-set-field-name (list-ref fields i)) i)))
               (data-set-features dataset)
               (data-set-classifiers dataset)
-              (compute-statistics dataset)
               (data-set-data-count dataset)
               (data-set-partition-count dataset)
               (data-set-partitions dataset))))
@@ -143,7 +142,9 @@
 
 (define (feature-vector ds partition-id feature-name)
   (when (not (hash-has-key? (data-set-name-index ds) feature-name))
-    (raise-argument-error 'feature-vector (format "one of: ~s" (hash-keys (data-set-name-index ds))) 2 data-set partition feature-name))
+    (raise-argument-error 'feature-vector
+                          (format "one of: ~s" (hash-keys (data-set-name-index ds)))
+                          2 data-set partition feature-name))
   (let* ([partition-index (partition->index 'feature-vector ds partition-id)]
          [feature-index (hash-ref (data-set-name-index ds) feature-name)]
          [a-part (partition ds partition-index)])
@@ -157,27 +158,21 @@
             (vector-ref part (hash-ref (data-set-name-index ds) name)))
             names))))
 
-;; ---------- Implementation (Statistics)
-
-(define (feature-statistics ds feature-name)
-  (when (not (hash-has-key? (data-set-name-index ds) feature-name))
-    (raise-argument-error 'feature-vector (format "one of: ~s" (hash-keys (data-set-name-index ds))) 2 data-set partition feature-name))
-  (let ([feature-index (hash-ref (data-set-name-index ds) feature-name)])
-    (touch (vector-ref (data-set-statistics ds) feature-index))))
-
-(define (standardize data-set features)
-  ; z_{ij} = x_{ij}-μ_j / σ_j
-  (raise-not-implemented 'standardize))
-
 ;; ---------- Implementation (Partitioning)
 
 (define (partition-equally ds p [entropy-classifiers '()])
   (when (not (eq? (partition-count ds) 1))
-    (raise-argument-error 'partition-for-test "partition-count /= 1" 1 ds p entropy-classifiers))
+    (raise-argument-error 'partition-for-test
+                          "partition-count /= 1"
+                          1 ds p entropy-classifiers))
   (when (< (data-count ds) (minimum-partition-data-total))
-    (raise-argument-error 'partition-for-test (format "data-count < ~a" (minimum-partition-data-total)) 1 ds p entropy-classifiers))
+    (raise-argument-error 'partition-for-test
+                          (format "data-count < ~a" (minimum-partition-data-total))
+                          1 ds p entropy-classifiers))
   (when (< (/ (data-count ds) p) (minimum-partition-data))
-    (raise-argument-error 'partition-for-test (format "data-count/p < ~a" (minimum-partition-data)) 1 ds p entropy-classifiers))
+    (raise-argument-error 'partition-for-test
+                          (format "data-count/p < ~a" (minimum-partition-data))
+                          1 ds p entropy-classifiers))
   (let ([source (partition ds default-partition)]
         [features (hash-count (data-set-name-index ds))]
         [partitions (make-vector p)])
@@ -186,19 +181,24 @@
     (for ([feature-idx (range features)])
       (let ([split-vector (vector-split-equal (vector-ref source feature-idx) p)])
         (for ([partition-idx (range p)])
-          (vector-set! (vector-ref partitions partition-idx) feature-idx (vector-ref split-vector partition-idx)))))
+          (vector-set! (vector-ref partitions partition-idx)
+                       feature-idx
+                       (vector-ref split-vector partition-idx)))))
     (data-set (data-set-name-index ds)
               (data-set-features ds)
               (data-set-classifiers ds)
-              (data-set-statistics ds)
               (data-set-data-count ds)
               p partitions)))
 
 (define (partition-for-test ds test-percent [entropy-classifiers '()])
   (when (not (eq? (partition-count ds) 1))
-    (raise-argument-error 'partition-for-test "partition-count /= 1" 1 ds test-percent entropy-classifiers))
+    (raise-argument-error 'partition-for-test
+                          "partition-count /= 1"
+                          1 ds test-percent entropy-classifiers))
   (when (< (data-count ds) (minimum-partition-data-total))
-    (raise-argument-error 'partition-for-test (format "data-count < ~a" (minimum-partition-data-total)) 1 ds test-percent entropy-classifiers))
+    (raise-argument-error 'partition-for-test
+                          (format "data-count < ~a" (minimum-partition-data-total))
+                          1 ds test-percent entropy-classifiers))
   (let ([source (partition ds default-partition)]
         [features (hash-count (data-set-name-index ds))]
         [split-at (exact-round (* (data-count ds) (/ test-percent 100)))]
@@ -212,7 +212,6 @@
        (data-set (data-set-name-index ds)
                  (data-set-features ds)
                  (data-set-classifiers ds)
-                 (data-set-statistics ds)
                  (data-set-data-count ds)
                  2 partitions)))
 
@@ -223,7 +222,6 @@
            ,(data-set-name-index ds)
            ,(data-set-features ds)
            ,(data-set-classifiers ds)
-           ,(for/vector ([stat (data-set-statistics ds)]) (when (future? stat) (touch stat)))
            ,(data-set-data-count ds)
            ,(data-set-partition-count ds)
            ,(data-set-partitions ds))
@@ -237,45 +235,40 @@
 
 ;; ---------- Internal procedures
 
-(define (compute-statistics ds)
-  (let ([stats-vector (make-vector (length (features ds)))])
-    (for ([feature (features ds)])
-      (vector-set!
-        stats-vector
-        (hash-ref (data-set-name-index ds) feature)
-        (future (λ () (update-statistics* empty-statistics (feature-vector ds default-partition feature))))))
-    stats-vector))
+(define/contract
+  (partition->index who ds index)
+  (-> symbol? data-set? partition-id? partition-id?)
+  (if (exact-nonnegative-integer? index)
+      (if (>= index (partition-count ds))
+          (raise-argument-error who (format "index < ~s" (partition-count ds)) 2 who ds index)
+          index)
+      (raise-argument-error who "integer or symbol" 2 who ds index)))
 
-(define (partition->index who ds index)
-  (cond
-    [(number? index)
-     (if (>= index (partition-count ds))
-       (raise-argument-error who (format "index < ~s" (partition-count ds)) 2 who ds index)
-       index)]
-    [else
-     (raise-argument-error who "integer or symbol" 2 who ds index)]))
-
-(define (list-unique-strings lst)
-  ; (listof string?) -> (listof unique? string?)
+(define/contract
+  (list-unique-strings lst)
+  (-> (vectorof string?) (listof string?))
   (set->list (for/set ([v lst]) (format "~a" v))))
 
 (define times (string #\⨉))
 
-(define (classifier-product-strings lst)
-  ; (listof (vectorof string?)) -> (listof unique? string?)
+(define/contract
+  (classifier-product-strings lst)
+  (-> (listof vector?) (listof string?))
   (map (lambda (l) (string-join l times))
        (apply cartesian-product (map list-unique-strings lst))))
 
-(define (vector-split-list v nth rem)
-  ; vector? integer? integer?
+(define/contract
+  (vector-split-list v nth rem)
+  (-> vector? exact-positive-integer? exact-nonnegative-integer? list?)
   (if (> (vector-length v) 0)
     (let ([at (if (> rem 0) (add1 nth) nth)])
       (let-values ([(head rest) (vector-split-at v at)])
         (cons head (vector-split-list rest nth (sub1 rem)))))
     '()))
 
-(define (vector-split-equal v n)
-  ; vector? integer?
+(define/contract
+  (vector-split-equal v n)
+  (-> vector? exact-positive-integer? vector?)
   (let ([nth (exact-floor (/ (vector-length v) n))]
         [rem (remainder (vector-length v) n)])
     (list->vector (vector-split-list v nth rem))))

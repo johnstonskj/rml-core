@@ -19,7 +19,8 @@
                      'rml/data
                      'rml/individual
                      ;'rml/not-implemented
-                     'rml/results)])
+                     'rml/results
+                     'rml/statistics)])
   (let ([s (open-output-string)])
       (parameterize ([current-error-port s])
         (check-docs module))

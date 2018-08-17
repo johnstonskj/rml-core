@@ -57,5 +57,8 @@
         (for ([row (range (vector-length (vector-ref source 0)))])
              (yield (make-hash
                (hash-map (data-set-name-index ds)
-                         (λ (k v) (cons k (vector-ref (vector-ref source (hash-ref (data-set-name-index ds) k)) row)))))))
+                         (λ (k v)
+                           (cons k (vector-ref
+                                    (vector-ref source (hash-ref (data-set-name-index ds) k))
+                                    row)))))))
         no-more-individuals)))

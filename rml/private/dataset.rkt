@@ -20,10 +20,6 @@
 
   (struct-out data-set-field))
 
-;; ---------- Requirements
-
-(require math/statistics)
-
 ;; ---------- Implementation Types
 
 (define-struct/contract data-set-field [
@@ -37,7 +33,6 @@
   (name-index (hash/c string? integer?))
   (features (listof string?))
   (classifiers (listof string?))
-  (statistics (vectorof (or/c future? statistics?)))
   (data-count integer?)
   (partition-count integer?)
   ; partitions : vector -> partition : vector -> feature : vector
@@ -45,7 +40,7 @@
 
 ;; ---------- Implementation
 
-(define empty-data-set (data-set (hash) '() '() #() 0 0 #()))
+(define empty-data-set (data-set (hash) '() '() 0 0 #()))
 
 (define (make-feature name #:index [index 0])
   (data-set-field name index #t #f #t))

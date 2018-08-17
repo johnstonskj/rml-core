@@ -39,7 +39,6 @@
     (data-set (make-hash (for/list ([i (length all-names)]) (cons (list-ref all-names i) i)))
               (map data-set-field-name (filter (λ (f) (data-set-field-feature? f)) fields))
               (map data-set-field-name (filter (λ (f) (data-set-field-classifier? f)) fields))
-              (make-vector (length all-names))
               rows
               1
               (vector partition))))
