@@ -17,8 +17,9 @@
  "test for documentation completeness"
  (for ([module (list 'rml/classify
                      'rml/data
+                     'rml/gini
                      'rml/individual
-                     ;'rml/not-implemented
+                     'rml/not-implemented
                      'rml/results
                      'rml/statistics)])
   (let ([s (open-output-string)])

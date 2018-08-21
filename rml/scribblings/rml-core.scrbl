@@ -468,6 +468,135 @@ predict classification values for the individual @racket[an-iris].
 
 @;{============================================================================}
 @;{============================================================================}
+@section[]{Module rml/statistics}
+@defmodule[rml/statistics]
+
+This module provides capabilities to compute statistical data over the underlying
+data for features in data sets. This assumes features are numeric and uses the
+@racket[math/statistics] module for actual calculations.
+
+@examples[ #:eval example-eval
+          (require rml/data)
+          (define dataset
+            (load-data-set "test/iris_training_data.csv"
+                           'csv
+                           (list
+                            (make-feature "sepal-length" #:index 0)
+                            (make-feature "sepal-width" #:index 1)
+                            (make-feature "petal-length" #:index 2)
+                            (make-feature "petal-width" #:index 3)
+                            (make-classifier "classification" #:index 4))))
+          (define stats (compute-statistics iris-data-set))
+          stats
+          (feature-statistics stats "sepal-length")
+          (standardize-statistics iris-data-set stats)
+          ]
+
+@defproc[#:kind "predicate"
+         (statistics-hash?
+          [a any?])
+         boolean?]{
+ Returns @racket[#t] if the value @racket[a] is a hash of strings to statistics
+ computations.
+}
+
+@defproc[(compute-statistics
+          [dataset data-set?]
+          [feature-names (or/c #f (listof string?)) #f])
+         statistics-hash?]{
+ Initiates the calculation of statistics for each feature named in @racket[feature-names]
+ or all features in the passed @racket[data-set] if @racket[feature-names] is
+ @racket[#f].
+
+ These are performed concurrently.
+ The result is a @racket[hash] of string names to @racket[statistics] structures (or a
+ @racket[future] if the computation has not yet completed). Using the
+ @racket[feature-statistics] accessor will always return a statistics structure.
+}
+
+@defproc[#:kind "accessor"
+         (feature-statistics
+          [stats-hash statistics-hash?]
+          [feature-name string?])
+         statistics-hash?]{
+ Return the @racket[statistics] structure for the feature @racket[feature-name]. If
+ the provided name is not a key in the underlying hash, the value @racket[#f] is returned.
+}
+
+@defproc[#:kind "transform"
+         (standardize-statistics
+          [dataset data-set?]
+          [statistics-hash statistics-hash?])
+         data-set?]{
+ Standardization requires statistics be computed for all features included in
+ @racket[stats-hash] and will normalize the values to reduce the effect of large
+ outlyer values and enable more efficient distance measures.
+
+ From @hyperlink["http://www.scholarpedia.org/article/K-nearest_neighbor" "Scholarpedia"]}:
+
+@italic{… removes scale effects caused by use of features with different measurement
+ scales. For example, if one feature is based on patient weight in units of kg and
+ another feature is based on blood protein values in units of ng/dL in the range
+ [-3,3], then patient weight will have a much greater influence on the distance
+ between samples and may bias the performance of the classifier. Standardization
+ transforms raw feature values into z-scores using the mean and standard deviation
+ of a feature values over all input samples}
+}
+
+@;{============================================================================}
+@;{============================================================================}
+@section[]{Module rml/gini}
+@defmodule[rml/gini]
+
+@defproc[(gini-find-optimal
+          [dataset data-set?]
+          [partition partition-id? default-partition]
+          [sample-features boolean? #f]
+          [predicate (or/c #f(-> any/c boolean?)) #f])
+         (values string? inexact? inexact?)]{
+}
+  
+@defproc[(gini-find-optimal-c
+          [data list?]
+          [features (listof string?)]
+          [classifier-key string?]
+          [classifier-values list?]
+          [sample-features boolean? #f]
+          [predicate (or/c #f (-> any/c boolean?)) #f])
+          (values string? inexact? inexact?)]{
+}
+  
+@defproc[(gini-find-optimal-value
+          [dataset data-set?]
+          [feature string?]
+          [partition partition-id? default-partition]
+          [predicate (or/c #f (-> any/c boolean?)) #f])
+         (values inexact? inexact?)]{
+}
+
+@defproc[(gini-find-optimal-value-c
+          [data list?]
+          [feature string?]
+          [classifier-key string?]
+          [classifier-values list?]
+          [predicate (or/c #f (-> any/c boolean?)) #f])
+         (values inexact? inexact?)]{
+}
+
+@defproc[(gini-score
+          [samplesets list?]
+          [classifier-key string?]
+          [classifier-values list?]
+          [total-size exact?])
+         inexact?]{
+}
+  
+@defthing[gini-perfect-score inexact?]{
+}
+
+
+@;{============================================================================}
+@;{============================================================================}
 @section[]{Module rml/results}
 @defmodule[rml/results]
 
@@ -565,82 +694,5 @@ of this, or any related package.
           [message string?])
          any]{
  Raises a @racket[exn:fail:not-implmented] exception.
-}
-
-@;{============================================================================}
-@;{============================================================================}
-@section[]{Module rml/statistics}
-@defmodule[rml/statistics]
-
-This module provides capabilities to compute statistical data over the underlying
-data for features in data sets. This assumes features are numeric and uses the
-@racket[math/statistics] module for actual calculations.
-
-@examples[ #:eval example-eval
-          (require rml/data)
-          (define dataset
-            (load-data-set "test/iris_training_data.csv"
-                           'csv
-                           (list
-                            (make-feature "sepal-length" #:index 0)
-                            (make-feature "sepal-width" #:index 1)
-                            (make-feature "petal-length" #:index 2)
-                            (make-feature "petal-width" #:index 3)
-                            (make-classifier "classification" #:index 4))))
-          (define stats (compute-statistics iris-data-set))
-          stats
-          (feature-statistics stats "sepal-length")
-          (standardize-statistics iris-data-set stats)
-          ]
-
-@defproc[#:kind "predicate"
-         (statistics-hash?
-          [a any?])
-         boolean?]{
- Returns @racket[#t] if the value @racket[a] is a hash of strings to statistics
- computations.
-}
-
-@defproc[(compute-statistics
-          [dataset data-set?]
-          [feature-names (or/c #f (listof string?)) #f])
-         statistics-hash?]{
- Initiates the calculation of statistics for each feature named in @racket[feature-names]
- or all features in the passed @racket[data-set] if @racket[feature-names] is
- @racket[#f].
-
- These are performed concurrently.
- The result is a @racket[hash] of string names to @racket[statistics] structures (or a
- @racket[future] if the computation has not yet completed). Using the
- @racket[feature-statistics] accessor will always return a statistics structure.
-}
-
-@defproc[#:kind "accessor"
-         (feature-statistics
-          [stats-hash statistics-hash?]
-          [feature-name string?])
-         statistics-hash?]{
- Return the @racket[statistics] structure for the feature @racket[feature-name]. If
- the provided name is not a key in the underlying hash, the value @racket[#f] is returned.
-}
-
-@defproc[#:kind "transform"
-         (standardize-statistics
-          [dataset data-set?]
-          [statistics-hash statistics-hash?])
-         data-set?]{
- Standardization requires statistics be computed for all features included in
- @racket[stats-hash] and will normalize the values to reduce the effect of large
- outlyer values and enable more efficient distance measures.
-
- From @hyperlink["http://www.scholarpedia.org/article/K-nearest_neighbor" "Scholarpedia"]}:
-
-@italic{… removes scale effects caused by use of features with different measurement
- scales. For example, if one feature is based on patient weight in units of kg and
- another feature is based on blood protein values in units of ng/dL in the range
- [-3,3], then patient weight will have a much greater influence on the distance
- between samples and may bias the performance of the classifier. Standardization
- transforms raw feature values into z-scores using the mean and standard deviation
- of a feature values over all input samples}
 }
 

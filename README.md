@@ -67,4 +67,4 @@ writing a snapshot to the current output port.
 The result of `feature-statistics` returns an instance of the `statistics`
 struct from `math/statistics`.
 
-[![Racket Langaueg](https://racket-lang.org/logo-and-text-1-2.png)](https://racket-lang.org/)
+[![Racket Language](https://racket-lang.org/logo-and-text-1-2.png)](https://racket-lang.org/)
