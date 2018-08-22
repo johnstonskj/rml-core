@@ -13,17 +13,19 @@
 
 ;; ---------- Test Cases
 
+(for ([module '(rml/classify
+                rml/data
+                ; rml/gini
+                rml/individual
+                rml/not-implemented
+                rml/results
+                rml/statistics)])
 (test-case
- "test for documentation completeness"
- (for ([module (list 'rml/classify
-                     'rml/data
-;                     'rml/gini
-                     'rml/individual
-                     'rml/not-implemented
-                     'rml/results
-                     'rml/statistics)])
-  (let ([s (open-output-string)])
-      (parameterize ([current-error-port s])
-        (check-docs module))
-        (displayln (get-output-string s))
-        (check-eq? (string-length (get-output-string s)) 0))))
+ (format "test for documentation: ~a" module)
+ (let ([s (open-output-string)])
+   (parameterize ([current-error-port s])
+     (check-docs module))
+   (define out (get-output-string s))
+   (when (non-empty-string? out)
+     (displayln out))
+   (check-eq? (string-length out) 0))))

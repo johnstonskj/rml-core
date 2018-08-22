@@ -682,7 +682,7 @@ of this, or any related package.
           ]
 
 @defproc[#:kind "predicate"
-         (exn:fail:not-implmented?
+         (exn:fail:not-implemented?
           [a any/c])
          boolean?]{
  Returns @racket[#t] if the value of @racket[a] is an instance of the

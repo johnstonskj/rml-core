@@ -16,7 +16,8 @@
   "math-lib"
   "csv-reading"
   "mcfly"          ;; mcfly required by csv-reading
-  "rackunit-lib"))
+  "rackunit-lib"
+  "racket-index"))
 (define build-deps '(
   "scribble-lib"
   "racket-doc"
