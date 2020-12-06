@@ -53,8 +53,8 @@
         (check-equal?
           (sort '("sepal-length" "sepal-width" "petal-length" "petal-width" "classification") string<?)
           (sort (hash-keys individual) string<?))
-        (check-eq? 6.3 (hash-ref individual "sepal-length"))
-        (check-eq? "Iris-versicolor" (hash-ref individual "classification"))))
+        (check-equal? 6.3 (hash-ref individual "sepal-length"))
+        (check-equal? "Iris-versicolor" (hash-ref individual "classification"))))
 
 (test-case
   "make-individual: hash with data-set fail on mismatch names"
