@@ -21,7 +21,7 @@
                 rml/results
                 rml/statistics)])
 (test-case
- (format "test for documentation: ~a" module)
+ (format "test for documentation in module ~a" module)
  (let ([s (open-output-string)])
    (parameterize ([current-error-port s])
      (check-docs module))
